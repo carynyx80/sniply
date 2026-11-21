@@ -21,3 +21,14 @@ PancakeSwap V2 (public router/factory addresses in `src/lib/chain-config.ts`). Q
 
 ## Market data
 Read live from the chain: ERC-20 metadata/supply, pair reserves (spot price, liquidity), and `Swap` logs from the last ~4,900 blocks (recent trades + price line). There's no USD conversion until an oracle or indexer (Bitquery/Codex) is configured. We never estimate volume or holder counts.
+
+## Company treasury
+- **Address:** `0xfEB14057bbF5Ba1C18a28E13a0Bf6e4c7DC337Ff` on BNB Smart Chain mainnet (chain 56). Configured with `SNIPLY_TREASURY_ADDRESS` (validated: EVM address, EIP-55 checksum when mixed-case, not the zero address). The built-in default is the same address.
+- **Verified on mainnet (read-only, 2026-11-21):** chain ID 56. The address is an externally owned wallet (no contract code). The BNB balance and nonce are readable, and the USDT/USDC balance reads work.
+- **Read-only by construction:** `src/server/treasury.ts` uses only a viem public client. There's no wallet client, account or key anywhere in `src` (enforced by a unit test).
+- **Visibility:** `/api/health` exposes the public address and chain. `/api/admin/treasury` (admin-only) shows live connectivity, account type, nonce and BNB/USDT/USDC balances. These also appear on the admin dashboard.
+- **Separation:**
+  - The treasury can't sign in as a user, so it can't be an agent operator or creator wallet. Set `ALLOW_TREASURY_SIGNIN=true` only if you deliberately need that.
+  - User wallets stay user-controlled.
+  - Agent identities stay Binance Agent ID records. Agentic Wallets aren't integrated.
+- **Revenue:** no platform revenue flow is active today. Sniply charges no trading fee, and the launch contract isn't deployed. Any future fee must be disclosed in the UI before signing and paid by the user's own signed transaction to this public address. The app never transfers user funds automatically.

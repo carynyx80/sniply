@@ -9,4 +9,5 @@
 - **Agents:** permission scopes, three modes, emergency pause, audit log. `canLaunchTokens` is false in code and by DB constraint.
 - **Content:** reports (incl. copyright takedown), admin moderation with reasons, audit trail, reputation penalty on removal.
 - **Headers:** nosniff, DENY framing, strict referrer, restrictive permissions policy.
+- **Treasury:** Sniply knows only the company wallet's public address. No private key, seed or wallet client exists in the codebase (a unit test fails the build if one appears). The treasury is read-only in the app, can't be used to sign in, and never receives automatic transfers.
 - **Known gaps:** no CSP yet (wallet SDKs need tuning). In-memory rate limits. Local dev media route is unauthenticated (production uses signed URLs). No malware scanning on uploads.

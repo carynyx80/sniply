@@ -88,6 +88,7 @@ function Admin() {
           </>
         )}
       </Card>
+      <TreasuryPanel />
 
       <div className="no-scrollbar flex gap-1 overflow-x-auto">
         {([["reports", "Reports", Flag], ["clips", "Clips", Clapperboard], ["jobs", "Processing", Activity], ["tx", "Failed transactions", AlertTriangle], ["audit", "Audit log", ShieldAlert]] as const).map(([k, l, I]) => (
@@ -141,5 +142,87 @@ function Admin() {
       </Card>
       <p className="text-xs text-dim">To shut off a compromised integration, unset its environment variable (e.g. NEXT_PUBLIC_LAUNCHPAD=none) and redeploy. Launch and AI routes fail closed when they aren’t configured.</p>
     </div>
+  );
+}
+
+type TreasuryStatus = {
+  address: string;
+  chainId: number;
+  configSource: "env" | "default";
+  connectivity: { ok: boolean; chainIdMatches: boolean; reportedChainId: number | null; latestBlock: string | null; latencyMs: number | null; error: string | null };
+  account: { type: "eoa" | "contract" | "unknown"; nonce: number | null };
+  balances: { symbol: string; amount: string; tokenAddress: string | null }[];
+  checkedAt: string;
+};
+
+/** Read-only view of the Sniply company wallet on BNB Smart Chain mainnet. */
+function TreasuryPanel() {
+  const [refresh, setRefresh] = useState(0);
+  const q = useQuery({
+    queryKey: ["admin-treasury", refresh],
+    queryFn: async () => {
+      const r = await fetch(`/api/admin/treasury${refresh ? "?refresh=1" : ""}`);
+      const j = await r.json();
+      if (!r.ok) throw new Error(j.error);
+      return j.treasury as TreasuryStatus;
+    },
+  });
+  const t = q.data;
+  return (
+    <Card className="overflow-hidden">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-line bg-surface-2 px-5 py-3">
+        <div className="flex items-center gap-3">
+          <span className="kicker">Company treasury · BNB Smart Chain</span>
+          {t && (t.connectivity.ok ? <Badge tone="ok">Mainnet connected</Badge> : <Badge tone="bad">RPC unavailable</Badge>)}
+          <Badge>Read-only</Badge>
+        </div>
+        <Button size="sm" variant="secondary" onClick={() => setRefresh((n) => n + 1)} disabled={q.isFetching}>
+          {q.isFetching ? "Checking…" : "Re-check"}
+        </Button>
+      </div>
+      {q.isLoading ? (
+        <Skeleton className="m-5 h-24" />
+      ) : q.error ? (
+        <p className="p-5 text-sm text-bad">{(q.error as Error).message}</p>
+      ) : t ? (
+        <div className="grid gap-6 p-5 md:grid-cols-[1.4fr_1fr]">
+          <div>
+            <p className="text-[13px] text-muted">Wallet address</p>
+            <a href={`https://bscscan.com/address/${t.address}`} target="_blank" rel="noreferrer" className="mt-1 block break-all font-mono text-[14px] text-accent hover:underline">
+              {t.address}
+            </a>
+            <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-[13px]">
+              <dt className="text-muted">Chain</dt>
+              <dd className="font-mono text-text">{t.connectivity.reportedChainId ?? "—"} {t.connectivity.chainIdMatches ? "(matches 56)" : ""}</dd>
+              <dt className="text-muted">Latest block</dt>
+              <dd className="font-mono text-text">{t.connectivity.latestBlock ? `#${Number(t.connectivity.latestBlock).toLocaleString()}` : "—"}</dd>
+              <dt className="text-muted">RPC latency</dt>
+              <dd className="font-mono text-text">{t.connectivity.latencyMs !== null ? `${t.connectivity.latencyMs} ms` : "—"}</dd>
+              <dt className="text-muted">Account type</dt>
+              <dd className="text-text">{t.account.type === "eoa" ? "Externally owned wallet" : t.account.type === "contract" ? "Smart contract" : "Unknown"}</dd>
+              <dt className="text-muted">Outgoing transactions</dt>
+              <dd className="font-mono text-text">{t.account.nonce ?? "—"}</dd>
+              <dt className="text-muted">Configured from</dt>
+              <dd className="text-text">{t.configSource === "env" ? "SNIPLY_TREASURY_ADDRESS" : "Built-in default"}</dd>
+            </dl>
+            {t.connectivity.error && <p className="mt-3 text-[13px] text-bad">{t.connectivity.error}</p>}
+          </div>
+          <div>
+            <p className="text-[13px] text-muted">Balances (live)</p>
+            <ul className="mt-2 divide-y divide-line rounded-[12px] border border-line">
+              {t.balances.map((b) => (
+                <li key={b.symbol} className="flex items-center justify-between px-4 py-2.5">
+                  <span className="font-mono text-[13px] font-semibold text-text">{b.symbol}</span>
+                  <span className="font-mono text-[14px] tabular-nums text-text">{b.amount === "unavailable" ? "—" : Number(b.amount).toLocaleString(undefined, { maximumFractionDigits: 6 })}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-3 text-[12px] text-muted">
+              Sniply only knows this wallet’s public address. It can’t sign, spend or move funds, and nothing transfers to it automatically. Checked {timeAgo(t.checkedAt)}.
+            </p>
+          </div>
+        </div>
+      ) : null}
+    </Card>
   );
 }

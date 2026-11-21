@@ -10,6 +10,17 @@ test("health reports integration status honestly", async ({ request }) => {
   expect(j.ok).toBe(true);
   expect(j.launchpad).toContain("disabled");
   expect(j.agentIdRegistry.verifiedByOfficialDocs).toBe(false);
+  expect(j.treasury).toEqual({ address: "0xfEB14057bbF5Ba1C18a28E13a0Bf6e4c7DC337Ff", chainId: 56, mode: "read-only" });
+});
+
+test("treasury is admin-only and cannot be used as a user account", async ({ request }) => {
+  expect((await request.get("/api/admin/treasury")).status()).toBe(401);
+  // Guard runs before any signature check, so no key is needed (and none is used).
+  const r = await request.post("/api/auth/verify", {
+    data: { address: "0xfEB14057bbF5Ba1C18a28E13a0Bf6e4c7DC337Ff", message: "x".repeat(40), signature: "0x00" },
+  });
+  expect(r.status()).toBe(403);
+  expect((await r.json()).error).toMatch(/treasury/i);
 });
 
 test("protected routes reject unauthenticated requests", async ({ request }) => {

@@ -3,6 +3,7 @@ import { getAddress, isAddress, verifyMessage } from "viem";
 import { db, now } from "@/server/db";
 import { createSession, HttpError } from "@/server/auth";
 import { clientKey, handle, json, rateLimit } from "@/server/http";
+import { isTreasury } from "@/server/treasury";
 
 const Body = z.object({
   address: z.string().refine(isAddress),
@@ -13,6 +14,10 @@ const Body = z.object({
 export const POST = handle(async (req: Request) => {
   rateLimit(`verify:${clientKey(req)}`, 10, 60_000);
   const { address, message, signature } = Body.parse(await req.json());
+
+  // Keep the company treasury separate from user accounts: it is not a creator or agent wallet.
+  if (isTreasury(address) && process.env.ALLOW_TREASURY_SIGNIN !== "true")
+    throw new HttpError(403, "The Sniply company treasury wallet can’t be used as a user account. Use a separate wallet.");
 
   // Message must bind to this host, this address, and a fresh unused nonce.
   // Accept the direct host, the proxy's forwarded host (Vercel → Railway), and explicitly allowed hosts.
