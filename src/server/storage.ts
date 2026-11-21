@@ -53,6 +53,17 @@ export async function mediaUrl(key: string | null) {
   return `/api/media/${key}`;
 }
 
+/** Read an object's bytes (used to send a clip thumbnail to the launchpad's IPFS). */
+export async function getObject(key: string): Promise<Buffer> {
+  safeKey(key);
+  if (sb) {
+    const { data, error } = await sb.storage.from(BUCKET).download(key);
+    if (error || !data) throw error ?? new Error("Object not found");
+    return Buffer.from(await data.arrayBuffer());
+  }
+  return fs.readFile(path.join(UP_DIR, key));
+}
+
 export function localPath(key: string) {
   return path.join(UP_DIR, safeKey(key));
 }

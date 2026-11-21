@@ -136,7 +136,7 @@ export default function MarketPage({ params }: { params: Promise<{ address: stri
             <Card className="p-5">
               <h2 className="text-sm font-semibold">Recent transactions</h2>
               {!hasPool ? (
-                <p className="mt-3 text-sm text-muted">No PancakeSwap pool exists for this token yet.</p>
+                <p className="mt-3 text-sm text-muted">No PancakeSwap pool yet. New tokens trade on Flap’s bonding curve until they graduate, then liquidity moves to PancakeSwap and recent trades appear here.</p>
               ) : swaps.isLoading ? (
                 <Skeleton className="mt-3 h-24" />
               ) : !swaps.data?.length ? (
@@ -272,7 +272,7 @@ function TradePanel({ token, symbol, decimals, hasPool, enabled, reserveToken, r
     setTimeout(() => { allowance.refetch(); tokBal.refetch(); native.refetch(); }, 0);
   }
 
-  const disabledReason = !enabled ? "Trading disabled for unverified tokens" : !hasPool ? "No liquidity pool on PancakeSwap" : null;
+  const disabledReason = !enabled ? "Trading disabled for unverified tokens" : !hasPool ? "Trading on Flap until graduation" : null;
 
   return (
     <Card className="p-5">
@@ -330,6 +330,9 @@ function TradePanel({ token, symbol, decimals, hasPool, enabled, reserveToken, r
           </Button>
         )}
       </div>
+      {enabled && (
+        <p className="mt-3 text-[13px] text-text-2">Sniply launches are Flap tax tokens: every buy and sell pays a 1% tax, split automatically between the creator and Sniply after Flap’s protocol fee.</p>
+      )}
       {chainId === 56 && (
         <Note tone="warn" className="mt-3 text-[13px]">
           BNB Smart Chain mainnet: swaps spend real BNB and tokens from your own wallet, and confirmed transactions can’t be reversed.

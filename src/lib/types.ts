@@ -137,6 +137,8 @@ export type TokenDraft = {
   description: string;
   links: { x?: string; telegram?: string; website?: string };
   status: "draft" | "submitted" | "confirmed" | "failed";
+  /** Set by /api/launches/prepare for Flap launches. */
+  flap?: { metaCid: string; salt: string; predictedToken: string; taxBps: number; preparedAt: ISO } | null;
   createdAt: ISO;
 };
 

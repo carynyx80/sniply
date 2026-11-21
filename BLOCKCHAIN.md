@@ -32,3 +32,21 @@ Read live from the chain: ERC-20 metadata/supply, pair reserves (spot price, liq
   - User wallets stay user-controlled.
   - Agent identities stay Binance Agent ID records. Agentic Wallets aren't integrated.
 - **Revenue:** no platform revenue flow is active today. Sniply charges no trading fee, and the launch contract isn't deployed. Any future fee must be disclosed in the UI before signing and paid by the user's own signed transaction to this public address. The app never transfers user funds automatically.
+
+## Token launch via Flap (live configuration)
+Set `NEXT_PUBLIC_LAUNCHPAD=flap` (BSC mainnet only). Sniply deploys **no contract**: creators call Flap's audited-in-production bonding-curve Portal from their own wallet.
+
+- **Docs:** [Flap: Launch tokens](https://docs.flap.sh/en/flap/v2/developers/bonding-curve/launch-tokens) and [Tax Token V3](https://docs.flap.sh/en/flap/v2/developers/bonding-curve/basic-and-mechanism/bonding-curve-tax-token-v3).
+- **Portal:** `0xe2cE6ab80874Fa9Fa2aAE65D277Dd6B8e65C9De0`. **Tax Token V3 impl:** `0x024f18294970B5c76c0691b87f138A0317156422` (vanity suffix `7777`). Both have contract code on mainnet.
+- **Validated:** `scripts/flap-simulate.mts` runs a read-only `eth_call` of `newTokenV6` against the live Portal. It succeeds and returns the predicted `…7777` address. No transaction is sent.
+- **Launch terms:** Tax Token V3, 1% buy and 1% sell tax for 100 years.
+  - `beneficiary` = the creator's signed-in wallet, with `mktBps = 10000`, so 100% of the remainder goes to the creator.
+  - `commissionReceiver` = the Sniply treasury.
+  - Flap computes the commission: 6% of the post-protocol-fee remainder at ≤1% tax. The result is **creator 94% / Sniply 6%** of the tax after Flap's protocol fee. Flap fixes Sniply's share, so an exact 90/10 split isn't possible natively.
+- **Flow:**
+  1. `POST /api/launches/prepare` uploads the clip thumbnail and metadata to Flap IPFS and mines the vanity salt.
+  2. The creator signs `newTokenV6` in their own wallet, optionally with a first buy.
+  3. `POST /api/launches` records the tx hash.
+  4. `reconcileAttempt` verifies the receipt, `tx.to` = Portal, `tx.from` = creator, and the decoded calldata (name, symbol, salt, meta, beneficiary = creator, commissionReceiver = treasury, 1% tax, Tax V3). It also checks the `TokenCreated` event (predicted token, creator, name, symbol).
+- **Trading:** tokens trade on Flap's bonding curve until they graduate (80% of supply), then on PancakeSwap V2. Sniply's trade panel works after graduation. Bonding-curve buys and sells aren't integrated in Sniply yet.
+- **Fees are distributed by Flap's tax processor** (`processor.dispatch()`) straight to each wallet. Sniply never custodies creator fees.

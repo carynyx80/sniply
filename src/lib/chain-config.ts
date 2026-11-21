@@ -52,12 +52,14 @@ export const PANCAKE_V2 = {
  * to testnet by the operator and its address set here).
  */
 export const LAUNCHPAD = {
-  kind: (process.env.NEXT_PUBLIC_LAUNCHPAD ?? "none") as "none" | "sniply-factory",
+  kind: (process.env.NEXT_PUBLIC_LAUNCHPAD ?? "none") as "none" | "sniply-factory" | "flap",
   factoryAddress: (process.env.NEXT_PUBLIC_SNIPLY_FACTORY_ADDRESS ?? "") as Address | "",
 };
 
 export const launchEnabled = () =>
-  LAUNCHPAD.kind === "sniply-factory" && /^0x[0-9a-fA-F]{40}$/.test(LAUNCHPAD.factoryAddress);
+  // Flap's Portal is BSC-mainnet only.
+  (LAUNCHPAD.kind === "flap" && NETWORK === "mainnet") ||
+  (LAUNCHPAD.kind === "sniply-factory" && /^0x[0-9a-fA-F]{40}$/.test(LAUNCHPAD.factoryAddress));
 
 export const DEFAULT_SLIPPAGE_BPS = 100; // 1%
 export const MAX_SLIPPAGE_BPS = 1500; // 15%
