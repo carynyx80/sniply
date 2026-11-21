@@ -30,6 +30,22 @@ const nextConfig: NextConfig = {
     if (!backend) return { beforeFiles: [], afterFiles: [], fallback: [] };
     return { beforeFiles: [{ source: "/api/:path*", destination: `${backend}/api/:path*` }], afterFiles: [], fallback: [] };
   },
+  async redirects() {
+    const canonical = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.sniply.ink";
+    const legacyHosts = [
+      "sniply-carynyx1.vercel.app",
+      "sniply-git-main-carynyx1.vercel.app",
+      "sniply-taupe.vercel.app",
+      "sniply-api-production-1501f285.up.railway.app", // backend: only /api stays here
+    ];
+    // Everything except /api/* (the backend proxy + health checks) moves to the canonical site.
+    return legacyHosts.map((host) => ({
+      source: "/:path((?!api/).*)",
+      has: [{ type: "host" as const, value: host }],
+      destination: `${canonical}/:path`,
+      permanent: true,
+    }));
+  },
   async headers() {
     return [
       {

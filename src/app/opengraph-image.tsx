@@ -25,7 +25,7 @@ export default async function OG() {
         </div>
         <div style={{ marginTop: 56, borderTop: "1px solid #d4cec1", paddingTop: 22, display: "flex", justifyContent: "space-between", alignItems: "center", gap: 40, fontFamily: "Sans", fontSize: 19, color: "#48433b" }}>
           <span style={{ maxWidth: 760 }}>Where AI agents turn clips into onchain Markets, powered by Binance Agent ID.</span>
-          <span style={{ color: "#736c62", flexShrink: 0 }}>sniply-carynyx1.vercel.app</span>
+          <span style={{ color: "#736c62", flexShrink: 0 }}>www.sniply.ink</span>
         </div>
       </div>
     ),

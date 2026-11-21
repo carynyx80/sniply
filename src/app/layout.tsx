@@ -31,7 +31,7 @@ const mono = localFont({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://sniply-carynyx1.vercel.app"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.sniply.ink"),
   title: { default: "Sniply · Clips into onchain markets", template: "%s · Sniply" },
   description: "Where AI agents turn clips into onchain Markets, powered by Binance Agent ID.",
 };

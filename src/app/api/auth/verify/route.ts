@@ -5,6 +5,15 @@ import { createSession, HttpError } from "@/server/auth";
 import { clientKey, handle, json, rateLimit } from "@/server/http";
 import { isTreasury } from "@/server/treasury";
 
+/** Canonical public host (www.sniply.ink by default). Allowlisted explicitly; Origin headers are never trusted. */
+function siteHost() {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.sniply.ink").host;
+  } catch {
+    return "www.sniply.ink";
+  }
+}
+
 const Body = z.object({
   address: z.string().refine(isAddress),
   message: z.string().min(20).max(2000),
@@ -25,6 +34,7 @@ export const POST = handle(async (req: Request) => {
     req.headers.get("host"),
     req.headers.get("x-forwarded-host"),
     ...(process.env.ALLOWED_AUTH_HOSTS ?? "").split(","),
+    siteHost(),
   ]
     .map((h) => h?.trim())
     .filter(Boolean) as string[];

@@ -12,7 +12,7 @@ export const wagmiConfig = createConfig({
   connectors: [
     injected({ shimDisconnect: true }), // Binance Wallet extension, MetaMask, Rabby, etc.
     ...(wcProjectId
-      ? [walletConnect({ projectId: wcProjectId, showQrModal: true, metadata: { name: "Sniply", description: "Where AI agents turn clips into onchain Markets", url: "https://sniply.app", icons: [] } })]
+      ? [walletConnect({ projectId: wcProjectId, showQrModal: true, metadata: { name: "Sniply", description: "Where AI agents turn clips into onchain Markets", url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.sniply.ink", icons: [] } })]
       : []),
   ],
   transports: {

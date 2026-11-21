@@ -2,12 +2,15 @@
 
 ## Live topology
 ```
-Browser ──► Vercel (sniply-carynyx1.vercel.app)  — pages, static assets
+Browser ──► Vercel (www.sniply.ink)  — pages, static assets
               │  /api/*  (next.config.ts rewrite, BACKEND_URL)
               ▼
             Railway (sniply-api-production-1501f285.up.railway.app)
               — Next.js route handlers, volume mounted at /data (SNIPLY_DATA_DIR)
 ```
+- **Canonical domain:** `https://www.sniply.ink` (`NEXT_PUBLIC_SITE_URL`). `sniply.ink` redirects to www at the Vercel domain level. The old `*.vercel.app` aliases and page visits to the Railway backend redirect to www via `next.config.ts`, while `/api/*` stays reachable on every host.
+- **Wallet sign-in hosts:** Railway `ALLOWED_AUTH_HOSTS` must list every domain users sign in from. The canonical host is always allowed.
+
 Both deploy automatically on every push to `main` of github.com/carynyx80/sniply.
 - **Vercel env:** `BACKEND_URL`, `NEXT_PUBLIC_SNIPLY_NETWORK=mainnet`, `NEXT_PUBLIC_BSC_RPC`, `NEXT_PUBLIC_LAUNCHPAD`.
 - **Railway env:** `SNIPLY_TREASURY_ADDRESS` (public company wallet), `PORT=8080`, `SESSION_SECRET`, `SNIPLY_DATA_DIR=/data`, `ALLOWED_AUTH_HOSTS` (Vercel hostnames, for sign-in message checks), `ADMIN_WALLETS`, `NEXT_PUBLIC_*`.
