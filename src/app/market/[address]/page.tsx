@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAccount, useBalance, usePublicClient, useReadContract, useReadContracts, useSwitchChain, useWaitForTransactionReceipt, useWriteContract } from "wagmi";
 import { formatEther, formatUnits, getAddress, isAddress, parseEther, parseUnits, type Address } from "viem";
 import { AlertTriangle, BadgeCheck, Check, Copy, ExternalLink, Loader2, Settings2 } from "lucide-react";
-import { Badge, Card, EmptyState, Skeleton } from "@/components/ui/primitives";
+import { Badge, Card, EmptyState, Note, Skeleton } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 import { ConnectButton } from "@/components/web3/connect-button";
 import { Footer } from "@/components/layout/footer";
@@ -330,7 +330,12 @@ function TradePanel({ token, symbol, decimals, hasPool, enabled, reserveToken, r
           </Button>
         )}
       </div>
-      <p className="mt-3 text-[11px] leading-relaxed text-dim">Quotes come from the router on-chain and can change before your transaction confirms. Tokens can lose all value.</p>
+      {chainId === 56 && (
+        <Note tone="warn" className="mt-3 text-[13px]">
+          BNB Smart Chain mainnet: swaps spend real BNB and tokens from your own wallet, and confirmed transactions can’t be reversed.
+        </Note>
+      )}
+      <p className="mt-3 text-[12px] leading-relaxed text-muted">Quotes come from the router on-chain and can change before your transaction confirms. Tokens can lose all value.</p>
     </Card>
   );
 }

@@ -11,6 +11,9 @@ export const NETWORK = (process.env.NEXT_PUBLIC_SNIPLY_NETWORK ?? "testnet") as 
 export const activeChain = NETWORK === "mainnet" ? bsc : bscTestnet;
 export const supportedChains = [bscTestnet, bsc] as const;
 
+/** Official BNB Chain public RPCs (used when no dedicated RPC is configured). */
+export const PUBLIC_RPC = { [bsc.id]: "https://bsc-dataseed.bnbchain.org", [bscTestnet.id]: "https://bsc-testnet-dataseed.bnbchain.org" } as const;
+
 export const explorerBase = (chainId: number) =>
   chainId === bsc.id ? "https://bscscan.com" : "https://testnet.bscscan.com";
 

@@ -9,7 +9,7 @@ import { Badge, Board, EmptyState, Note, PageHeader, Skeleton } from "@/componen
 import { buttonClass } from "@/components/ui/button";
 import { Footer } from "@/components/layout/footer";
 import { erc20Abi, pancakeFactoryAbi } from "@/lib/abis";
-import { PANCAKE_V2 } from "@/lib/chain-config";
+import { activeChain, PANCAKE_V2 } from "@/lib/chain-config";
 import type { PublicClip, TokenLaunch } from "@/lib/types";
 import { fmtNum, timeAgo } from "@/lib/utils";
 
@@ -17,7 +17,7 @@ type Market = TokenLaunch & { clip: PublicClip | null };
 const ZERO = "0x0000000000000000000000000000000000000000";
 
 function useMarketReads(m: Market) {
-  const pc = PANCAKE_V2[(m.chainId in PANCAKE_V2 ? m.chainId : 97) as keyof typeof PANCAKE_V2];
+  const pc = PANCAKE_V2[(m.chainId in PANCAKE_V2 ? m.chainId : activeChain.id) as keyof typeof PANCAKE_V2];
   const r = useReadContracts({
     contracts: [
       { address: m.tokenAddress as Address, abi: erc20Abi, functionName: "totalSupply", chainId: m.chainId },

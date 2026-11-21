@@ -9,7 +9,7 @@ Browser ──► Vercel (sniply-carynyx1.vercel.app)  — pages, static assets
               — Next.js route handlers, volume mounted at /data (SNIPLY_DATA_DIR)
 ```
 Both deploy automatically on every push to `main` of github.com/carynyx80/sniply.
-- **Vercel env:** `BACKEND_URL`, `NEXT_PUBLIC_SNIPLY_NETWORK`, `NEXT_PUBLIC_LAUNCHPAD`.
+- **Vercel env:** `BACKEND_URL`, `NEXT_PUBLIC_SNIPLY_NETWORK=mainnet`, `NEXT_PUBLIC_BSC_RPC`, `NEXT_PUBLIC_LAUNCHPAD`.
 - **Railway env:** `SNIPLY_TREASURY_ADDRESS` (public company wallet), `PORT=8080`, `SESSION_SECRET`, `SNIPLY_DATA_DIR=/data`, `ALLOWED_AUTH_HOSTS` (Vercel hostnames, for sign-in message checks), `ADMIN_WALLETS`, `NEXT_PUBLIC_*`.
 - Railway runs a single replica. The local JSON store isn't safe across replicas, so move to Supabase before scaling out.
 - Uploads pass through the Vercel proxy, which caps request bodies at roughly 4.5 MB. For larger videos, add direct-to-storage uploads (see step 3 below).

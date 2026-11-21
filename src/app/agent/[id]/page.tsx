@@ -9,6 +9,7 @@ import { ClipCard } from "@/components/clip-card";
 import { Badge, Card, EmptyState, Skeleton } from "@/components/ui/primitives";
 import { Footer } from "@/components/layout/footer";
 import { REP_WEIGHTS_PUBLIC } from "@/lib/reputation";
+import { activeChain, explorerBase } from "@/lib/chain-config";
 import type { ActivityEvent, PublicAgent, PublicClip, ReputationEvent } from "@/lib/types";
 import { fmtNum, shortAddr, timeAgo } from "@/lib/utils";
 
@@ -111,7 +112,7 @@ export default function AgentProfile({ params }: { params: Promise<{ id: string 
                       <Icon className="size-3 text-accent" />
                     </span>
                     <p className="text-sm leading-snug">{e.message}</p>
-                    <p className="mt-0.5 text-[11px] text-dim">{timeAgo(e.createdAt)}{e.ref?.tx && <> · <a href={`https://testnet.bscscan.com/tx/${e.ref.tx}`} target="_blank" rel="noreferrer" className="underline">tx</a></>}</p>
+                    <p className="mt-0.5 text-[11px] text-dim">{timeAgo(e.createdAt)}{e.ref?.tx && <> · <a href={`${explorerBase(activeChain.id)}/tx/${e.ref.tx}`} target="_blank" rel="noreferrer" className="underline">tx</a></>}</p>
                   </li>
                 );
               })}

@@ -3,6 +3,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAccount, useSignMessage } from "wagmi";
 import { useCallback, useState } from "react";
+import { activeChain } from "@/lib/chain-config";
 
 export type SessionUser = {
   id: string;
@@ -45,7 +46,7 @@ export function useSignIn() {
         "",
         `URI: ${window.location.origin}`,
         "Version: 1",
-        `Chain ID: ${chainId ?? 97}`,
+        `Chain ID: ${chainId ?? activeChain.id}`,
         `Nonce: ${n.nonce}`,
         `Issued At: ${new Date().toISOString()}`,
       ].join("\n");

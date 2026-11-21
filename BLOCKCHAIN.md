@@ -1,7 +1,7 @@
 # Blockchain
 
 ## Networks
-`NEXT_PUBLIC_SNIPLY_NETWORK=testnet` (default, BSC Testnet 97) or `mainnet` (BSC 56). Agent ID checks always read BSC mainnet, where the registry lives.
+Production runs on **BNB Smart Chain mainnet (56)**: `NEXT_PUBLIC_SNIPLY_NETWORK=mainnet` on Vercel and Railway. It falls back to the official BNB Chain public RPC `https://bsc-dataseed.bnbchain.org`. Use a dedicated RPC provider for higher limits. Set `testnet` (BSC Testnet 97) for staging. On mainnet, the trade panel warns users that swaps spend real funds from their own wallet. Agent ID checks always read BSC mainnet, where the registry lives.
 
 ## Token launch: why it's off by default
 We couldn't find official integration docs for an existing BNB Chain launchpad. Four.meme has community ABIs and SDKs only, and indexers warn that its contracts change. **We don't assume Pump.fun-style infrastructure exists on BNB.** Sniply instead ships:

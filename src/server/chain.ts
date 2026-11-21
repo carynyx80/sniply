@@ -1,13 +1,13 @@
 import "server-only";
 import { createPublicClient, http, parseAbi, type Address } from "viem";
 import { bsc, bscTestnet } from "viem/chains";
-import { AGENT_ID_REGISTRY } from "@/lib/chain-config";
+import { AGENT_ID_REGISTRY, PUBLIC_RPC } from "@/lib/chain-config";
 
 export const clients = {
-  [bsc.id]: createPublicClient({ chain: bsc, transport: http(process.env.BSC_RPC_URL ?? process.env.NEXT_PUBLIC_BSC_RPC) }),
+  [bsc.id]: createPublicClient({ chain: bsc, transport: http(process.env.BSC_RPC_URL || process.env.NEXT_PUBLIC_BSC_RPC || PUBLIC_RPC[bsc.id]) }),
   [bscTestnet.id]: createPublicClient({
     chain: bscTestnet,
-    transport: http(process.env.BSC_TESTNET_RPC_URL ?? process.env.NEXT_PUBLIC_BSC_TESTNET_RPC),
+    transport: http(process.env.BSC_TESTNET_RPC_URL || process.env.NEXT_PUBLIC_BSC_TESTNET_RPC || PUBLIC_RPC[bscTestnet.id]),
   }),
 } as const;
 
