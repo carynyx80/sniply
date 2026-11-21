@@ -41,7 +41,7 @@ function Agents() {
       <div className="flex items-end justify-between gap-4">
         <div>
           <Eyebrow>My agents</Eyebrow>
-          <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] md:text-4xl">Agents & identity</h1>
+          <h1 className="mt-3 display text-[clamp(36px,4.6vw,52px)]">Agents & identity</h1>
         </div>
         <button onClick={() => router.push("/studio/agents?new=1")} className={buttonClass("primary", "md")}>
           <Plus className="size-4" /> New agent
@@ -54,11 +54,11 @@ function Agents() {
             <button
               key={a.id}
               onClick={() => router.push(`/studio/agents?id=${a.id}`)}
-              className={cn("flex w-full items-center gap-3 rounded-[10px] border p-3 text-left transition", current?.id === a.id && !creating ? "border-pink/40 bg-pink/[0.06]" : "border-line bg-surface hover:border-line-strong")}
+              className={cn("flex w-full items-center gap-3 rounded-[14px] border p-3 text-left transition", current?.id === a.id && !creating ? "border-accent/40 bg-accent/[0.06]" : "border-line bg-surface hover:border-line-2")}
             >
-              <AgentAvatar hue={a.avatarHue} verified={a.identity.verified} className="size-9" />
+              <AgentAvatar name={a.name} hue={a.avatarHue} verified={a.identity.verified} className="size-9" />
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium">{a.name}</p>
+                <p className="truncate text-sm font-semibold">{a.name}</p>
                 <p className="text-[11px] capitalize text-dim">{a.mode}</p>
               </div>
             </button>
@@ -101,10 +101,10 @@ function CreateAgent({ onCreated }: { onCreated: (a: Agent) => void }) {
 
   return (
     <Card className="p-6">
-      <h2 className="text-lg font-medium tracking-tight">Create a clipping agent</h2>
+      <h2 className="display text-[24px] leading-tight">Create a clipping agent</h2>
       <div className="mt-6 grid gap-5 md:grid-cols-[auto_1fr]">
         <div className="flex flex-col items-center gap-3">
-          <AgentAvatar hue={hue} className="size-20 rounded-[12px]" />
+          <AgentAvatar name={name} hue={hue} className="size-20 rounded-[14px]" />
           <input type="range" min={0} max={360} value={hue} onChange={(e) => setHue(+e.target.value)} className="w-24" aria-label="Avatar color" />
         </div>
         <div className="space-y-4">
@@ -117,17 +117,17 @@ function CreateAgent({ onCreated }: { onCreated: (a: Agent) => void }) {
         </div>
       </div>
 
-      <p className="mt-7 text-[13px] font-medium">Operating mode</p>
+      <p className="mt-7 text-[13px] font-semibold">Operating mode</p>
       <div className="mt-2 grid gap-2 md:grid-cols-3">
         {MODES.map((m) => (
-          <button key={m.k} onClick={() => setMode(m.k)} className={cn("rounded-[10px] border p-4 text-left transition", mode === m.k ? "border-pink/50 bg-pink/[0.06]" : "border-line bg-ink hover:border-line-strong")}>
-            <p className="text-sm font-medium">{m.t}</p>
+          <button key={m.k} onClick={() => setMode(m.k)} className={cn("rounded-[14px] border p-4 text-left transition", mode === m.k ? "border-accent/50 bg-accent/[0.06]" : "border-line bg-surface-2 hover:border-line-2")}>
+            <p className="text-sm font-semibold">{m.t}</p>
             <p className="mt-1 text-xs leading-relaxed text-muted">{m.d}</p>
           </button>
         ))}
       </div>
 
-      <p className="mt-7 text-[13px] font-medium">Clipping preferences</p>
+      <p className="mt-7 text-[13px] font-semibold">Clipping preferences</p>
       <div className="mt-2 grid grid-cols-2 gap-3 md:grid-cols-4">
         <Field label="Min length (s)">
           <input type="number" className={inputClass} value={prefs.clipMinSec} min={3} max={120} onChange={(e) => setPrefs({ ...prefs, clipMinSec: +e.target.value })} />
@@ -153,7 +153,7 @@ function CreateAgent({ onCreated }: { onCreated: (a: Agent) => void }) {
             {["9:16", "16:9", "1:1"].map((c) => <option key={c}>{c}</option>)}
           </select>
         </Field>
-        <label className="col-span-2 flex items-center gap-2 self-end rounded-[8px] border border-line bg-ink px-3 py-2.5 text-sm text-muted">
+        <label className="col-span-2 flex items-center gap-2 self-end rounded-[8px] border border-line bg-surface-2 px-3 py-2.5 text-sm text-muted">
           <input type="checkbox" checked={prefs.autoDraft} onChange={(e) => setPrefs({ ...prefs, autoDraft: e.target.checked })} className="accent-[#FF2BBE]" /> Auto-create drafts
           <input type="checkbox" checked={prefs.notifyOnDraft} onChange={(e) => setPrefs({ ...prefs, notifyOnDraft: e.target.checked })} className="ml-4 accent-[#FF2BBE]" /> Notify me
         </label>
@@ -202,9 +202,9 @@ function ManageAgent({ agent }: { agent: PublicAgent }) {
   return (
     <div className="space-y-4">
       <Card className="flex flex-wrap items-center gap-4 p-5">
-        <AgentAvatar hue={agent.avatarHue} verified={agent.identity.verified} className="size-14 rounded-[10px]" />
+        <AgentAvatar name={agent.name} hue={agent.avatarHue} verified={agent.identity.verified} className="size-14 rounded-[14px]" />
         <div className="min-w-0 flex-1">
-          <h2 className="text-xl font-semibold tracking-tight">{agent.name}</h2>
+          <h2 className="display text-[28px] leading-tight">{agent.name}</h2>
           <p className="text-sm text-muted">{agent.description || "No description"}</p>
         </div>
         <Link href={`/agent/${agent.slug}`} className={buttonClass("secondary", "sm")}>
@@ -214,11 +214,10 @@ function ManageAgent({ agent }: { agent: PublicAgent }) {
 
       {/* Agent ID */}
       <Card className="relative overflow-hidden p-6">
-        <div className="absolute right-0 top-0 h-32 w-64 rounded-full bg-blue/20 blur-3xl" />
         <div className="relative flex items-start justify-between gap-4">
           <div>
-            <h3 className="flex items-center gap-2 font-medium">
-              {agent.identity.verified ? <BadgeCheck className="size-5 text-[#7e9bff]" /> : <ShieldAlert className="size-5 text-warn" />}
+            <h3 className="flex items-center gap-2 font-semibold">
+              {agent.identity.verified ? <BadgeCheck className="size-5 text-accent" /> : <ShieldAlert className="size-5 text-warn" />}
               Binance Agent ID
             </h3>
             <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted">
@@ -230,15 +229,15 @@ function ManageAgent({ agent }: { agent: PublicAgent }) {
 
         {agent.identity.verified ? (
           <dl className="relative mt-5 grid gap-3 text-sm sm:grid-cols-3">
-            <div className="rounded-[8px] border border-line bg-ink p-3">
+            <div className="rounded-[8px] border border-line bg-surface-2 p-3">
               <dt className="text-[11px] text-dim">Owner wallet · on-chain</dt>
               <dd className="mt-1 font-mono text-xs">{shortAddr(agent.identity.ownerWallet, 6)}</dd>
             </div>
-            <div className="rounded-[8px] border border-line bg-ink p-3">
+            <div className="rounded-[8px] border border-line bg-surface-2 p-3">
               <dt className="text-[11px] text-dim">Registry · BSC</dt>
               <dd className="mt-1 font-mono text-xs">{shortAddr(agent.identity.registry, 6)}</dd>
             </div>
-            <div className="rounded-[8px] border border-line bg-ink p-3">
+            <div className="rounded-[8px] border border-line bg-surface-2 p-3">
               <dt className="text-[11px] text-dim">Claimed name · unverified</dt>
               <dd className="mt-1 text-xs">{agent.identity.claimedName ?? "—"}</dd>
             </div>
@@ -257,7 +256,7 @@ function ManageAgent({ agent }: { agent: PublicAgent }) {
         <div className="relative mt-5 rounded-[8px] border border-line bg-ink/60 p-3.5 text-xs leading-relaxed text-dim">
           <p>
             Don’t have one yet? Agent IDs are issued through the Binance Wallet app (Wallet tab → Agent ID). Registry{" "}
-            <a className="font-mono underline decoration-dotted hover:text-white" target="_blank" rel="noreferrer" href={`https://bscscan.com/address/${AGENT_ID_REGISTRY.address}`}>
+            <a className="font-mono underline decoration-dotted hover:text-text" target="_blank" rel="noreferrer" href={`https://bscscan.com/address/${AGENT_ID_REGISTRY.address}`}>
               {shortAddr(AGENT_ID_REGISTRY.address, 6)}
             </a>
             {!AGENT_ID_REGISTRY.verifiedByOfficialDocs && " (we haven’t confirmed this registry address against official Binance docs yet; it’s configurable)."}
@@ -268,19 +267,19 @@ function ManageAgent({ agent }: { agent: PublicAgent }) {
       {/* Mode + permissions */}
       <Card className="p-6">
         <div className="flex items-center justify-between">
-          <h3 className="font-medium">Operating mode & permissions</h3>
+          <h3 className="font-semibold">Operating mode & permissions</h3>
           {saving && <Loader2 className="size-4 animate-spin text-muted" />}
         </div>
         <div className="mt-4 grid gap-2 md:grid-cols-3">
           {MODES.map((m) => (
-            <button key={m.k} onClick={() => patch({ mode: m.k })} className={cn("rounded-[10px] border p-4 text-left transition", agent.mode === m.k ? "border-pink/50 bg-pink/[0.06]" : "border-line bg-ink hover:border-line-strong")}>
-              <p className="text-sm font-medium">{m.t}</p>
+            <button key={m.k} onClick={() => patch({ mode: m.k })} className={cn("rounded-[14px] border p-4 text-left transition", agent.mode === m.k ? "border-accent/50 bg-accent/[0.06]" : "border-line bg-surface-2 hover:border-line-2")}>
+              <p className="text-sm font-semibold">{m.t}</p>
               <p className="mt-1 text-xs leading-relaxed text-muted">{m.d}</p>
             </button>
           ))}
         </div>
         {perms && (
-          <div className="mt-5 divide-y divide-line rounded-[10px] border border-line">
+          <div className="mt-5 divide-y divide-line rounded-[14px] border border-line">
             <Toggle label="Draft clips" desc="Create clip drafts from analysis results." on={perms.canDraftClips} locked />
             <Toggle label="Draft token metadata" desc="Suggest names, tickers and descriptions for your review." on={perms.canDraftTokens} onChange={(v) => patch({ canDraftTokens: v })} />
             <Toggle
@@ -293,9 +292,9 @@ function ManageAgent({ agent }: { agent: PublicAgent }) {
             <Toggle label="Launch tokens / spend funds" desc="Disabled platform-wide until Agentic Wallet spending limits and transaction validation are verified. Every launch is signed by you." on={false} locked lockIcon />
           </div>
         )}
-        <div className="mt-5 flex items-center justify-between rounded-[10px] border border-line bg-ink p-4">
+        <div className="mt-5 flex items-center justify-between rounded-[14px] border border-line bg-surface-2 p-4">
           <div>
-            <p className="text-sm font-medium">{perms?.paused ? "Agent paused" : "Emergency pause"}</p>
+            <p className="text-sm font-semibold">{perms?.paused ? "Agent paused" : "Emergency pause"}</p>
             <p className="text-xs text-muted">Immediately stops new jobs and drafts for this agent.</p>
           </div>
           <Button variant={perms?.paused ? "secondary" : "danger"} size="sm" onClick={() => patch({ paused: !perms?.paused })}>
@@ -320,7 +319,7 @@ function Toggle({ label, desc, on, onChange, locked, lockIcon }: { label: string
         aria-label={label}
         disabled={locked || !onChange}
         onClick={() => onChange?.(!on)}
-        className={cn("relative h-6 w-11 shrink-0 rounded-full transition disabled:opacity-40", on ? "bg-pink" : "bg-white/10")}
+        className={cn("relative h-6 w-11 shrink-0 rounded-full transition disabled:opacity-40", on ? "bg-accent" : "bg-surface-3")}
       >
         <span className={cn("absolute top-0.5 size-5 rounded-full bg-white transition-all", on ? "left-[22px]" : "left-0.5")} />
       </button>

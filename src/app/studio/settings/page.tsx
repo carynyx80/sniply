@@ -26,7 +26,7 @@ export default function Settings() {
   return (
     <div className="mx-auto max-w-3xl space-y-4">
       <Eyebrow>Settings</Eyebrow>
-      <h1 className="text-3xl font-semibold tracking-[-0.04em] md:text-4xl">Profile & platform</h1>
+      <h1 className="display text-[clamp(36px,4.6vw,52px)]">Profile & platform</h1>
       <Card className="space-y-4 p-6">
         <Field label="Username" hint="3–20 letters, numbers or underscores.">
           <input className={inputClass} value={username} onChange={(e) => setUsername(e.target.value)} />
@@ -37,8 +37,8 @@ export default function Settings() {
         <div className="flex items-center gap-3"><Button onClick={save}>Save profile</Button>{msg && <span className="text-sm text-muted">{msg}</span>}</div>
       </Card>
       <Card className="p-6">
-        <h2 className="text-sm font-medium">Integration status</h2>
-        <pre className="mt-3 overflow-x-auto rounded-[8px] bg-ink p-4 font-mono text-xs leading-relaxed text-muted">{health.data ? JSON.stringify(health.data, null, 2) : "Loading…"}</pre>
+        <h2 className="text-sm font-semibold">Integration status</h2>
+        <pre className="mt-3 overflow-x-auto rounded-[8px] bg-surface-2 p-4 font-mono text-xs leading-relaxed text-muted">{health.data ? JSON.stringify(health.data, null, 2) : "Loading…"}</pre>
       </Card>
     </div>
   );

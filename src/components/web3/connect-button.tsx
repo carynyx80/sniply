@@ -28,7 +28,7 @@ export function ConnectButton({ className }: { className?: string }) {
     return () => document.removeEventListener("mousedown", h);
   }, []);
 
-  if (!mounted) return <div className={cn("h-9 w-36 rounded-full bg-white/5", className)} />;
+  if (!mounted) return <div className={cn("h-9 w-36 rounded-full bg-surface-3", className)} />;
 
   const wrongChain = isConnected && chainId !== activeChain.id;
   const authed = user && address && user.wallet.toLowerCase() === address.toLowerCase();
@@ -38,13 +38,13 @@ export function ConnectButton({ className }: { className?: string }) {
       <button
         onClick={() => setOpen((o) => !o)}
         className={cn(
-          buttonClass(isConnected ? "secondary" : "primary", "sm"),
-          "h-9 gap-2 pl-3 pr-3",
+          buttonClass("ink", "sm"),
+          "h-9 gap-2 px-4",
         )}
       >
         {isConnected ? (
           <>
-            <span className={cn("size-2 rounded-full", authed ? "bg-ok" : wrongChain ? "bg-warn" : "bg-muted")} />
+            <span className={cn("size-2 rounded-full", authed ? "bg-green" : wrongChain ? "bg-amber" : "bg-paper/50")} />
             <span className="font-mono text-xs">{shortAddr(address)}</span>
             <ChevronDown className="size-3.5 opacity-60" />
           </>
@@ -62,7 +62,7 @@ export function ConnectButton({ className }: { className?: string }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute right-0 top-11 z-50 w-72 overflow-hidden rounded-[10px] border border-line-strong bg-surface/95 p-1.5 shadow-2xl shadow-black/60 backdrop-blur-xl"
+            className="absolute right-0 top-11 z-50 w-72 overflow-hidden rounded-[14px] border border-line bg-surface p-1.5 shadow-[var(--shadow-feature)]"
           >
             {!isConnected ? (
               <div className="space-y-1">
@@ -72,9 +72,9 @@ export function ConnectButton({ className }: { className?: string }) {
                     key={c.uid}
                     disabled={isPending}
                     onClick={() => connect({ connector: c, chainId: activeChain.id })}
-                    className="flex w-full items-center gap-3 rounded-[7px] px-3 py-2.5 text-left text-sm hover:bg-white/5"
+                    className="flex w-full items-center gap-3 rounded-[7px] px-3 py-2.5 text-left text-sm hover:bg-surface-2"
                   >
-                    <span className="grid size-8 place-items-center rounded-[6px] bg-white/5">
+                    <span className="grid size-8 place-items-center rounded-[6px] bg-surface-3">
                       <Wallet className="size-4" />
                     </span>
                     <span>
@@ -90,7 +90,7 @@ export function ConnectButton({ className }: { className?: string }) {
             ) : (
               <div className="space-y-1">
                 <div className="px-3 pb-2 pt-2">
-                  <p className="font-mono text-xs text-muted">{shortAddr(address, 6)}</p>
+                  <p className="font-mono text-xs text-text-2">{shortAddr(address, 6)}</p>
                   <p className="mt-1 text-[11px] text-dim">
                     {authed ? "Signed in · wallet ownership verified" : "Connected · not signed in"}
                   </p>
@@ -98,7 +98,7 @@ export function ConnectButton({ className }: { className?: string }) {
                 {wrongChain && (
                   <button
                     onClick={() => switchChain({ chainId: activeChain.id })}
-                    className="flex w-full items-center gap-2 rounded-[7px] px-3 py-2.5 text-sm text-warn hover:bg-white/5"
+                    className="flex w-full items-center gap-2 rounded-[7px] px-3 py-2.5 text-sm text-warn hover:bg-surface-2"
                   >
                     <AlertTriangle className="size-4" /> Switch to {activeChain.name}
                   </button>
@@ -107,9 +107,9 @@ export function ConnectButton({ className }: { className?: string }) {
                   <button
                     onClick={signIn}
                     disabled={signing}
-                    className="flex w-full items-center gap-2 rounded-[7px] px-3 py-2.5 text-sm hover:bg-white/5"
+                    className="flex w-full items-center gap-2 rounded-[7px] px-3 py-2.5 text-sm hover:bg-surface-2"
                   >
-                    <ShieldCheck className="size-4 text-pink" /> {signing ? "Check your wallet…" : "Sign in with wallet"}
+                    <ShieldCheck className="size-4 text-accent" /> {signing ? "Check your wallet…" : "Sign in with wallet"}
                   </button>
                 )}
                 {signError && <p className="px-3 py-1 text-xs text-bad">{signError}</p>}
@@ -117,7 +117,7 @@ export function ConnectButton({ className }: { className?: string }) {
                   <Link
                     href={`/profile/${address}`}
                     onClick={() => setOpen(false)}
-                    className="flex w-full items-center gap-2 rounded-[7px] px-3 py-2.5 text-sm hover:bg-white/5"
+                    className="flex w-full items-center gap-2 rounded-[7px] px-3 py-2.5 text-sm hover:bg-surface-2"
                   >
                     <User className="size-4" /> My profile
                   </Link>
@@ -128,7 +128,7 @@ export function ConnectButton({ className }: { className?: string }) {
                     disconnect();
                     setOpen(false);
                   }}
-                  className="flex w-full items-center gap-2 rounded-[7px] px-3 py-2.5 text-sm text-muted hover:bg-white/5 hover:text-white"
+                  className="flex w-full items-center gap-2 rounded-[7px] px-3 py-2.5 text-sm text-muted hover:bg-surface-2 hover:text-text"
                 >
                   <LogOut className="size-4" /> Disconnect
                 </button>

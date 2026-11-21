@@ -230,11 +230,11 @@ export function ClipEditor({
   return (
     <div className="grid gap-4 lg:grid-cols-[1.25fr_1fr]">
       <div className="space-y-4">
-        <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-muted hover:text-white">
+        <button onClick={onBack} className="flex items-center gap-1.5 text-sm text-muted hover:text-text">
           <ArrowLeft className="size-4" /> All candidates
         </button>
         <Card className="overflow-hidden p-3">
-          <div className="flex justify-center rounded-[10px] bg-black">
+          <div className="flex justify-center rounded-[14px] bg-black">
             <div className={cn("relative mx-auto overflow-hidden", frame)}>
               <video ref={vref} src={videoUrl} playsInline className="size-full object-cover" onPause={() => setPlaying(false)} onPlay={() => setPlaying(true)} />
               {caption && (
@@ -260,7 +260,7 @@ export function ClipEditor({
           <div className="mt-3 px-1 pb-1">
             <div
               ref={trackRef}
-              className="relative h-14 touch-none select-none rounded-[8px] bg-ink"
+              className="relative h-14 touch-none select-none rounded-[8px] bg-surface-2"
               onPointerDown={(e) => {
                 if (e.target === trackRef.current) drag("head")(e);
               }}
@@ -270,7 +270,7 @@ export function ClipEditor({
                   <div key={i} className="flex-1 rounded-sm bg-white/15" style={{ height: `${30 + 40 * Math.abs(Math.sin(i * 0.9 + start))}%` }} />
                 ))}
               </div>
-              <div className="absolute inset-y-0 rounded-lg border-2 border-pink bg-pink/15" style={{ left: `${toPct(start)}%`, width: `${toPct(end) - toPct(start)}%` }} />
+              <div className="absolute inset-y-0 rounded-lg border-2 border-accent bg-accent/15" style={{ left: `${toPct(start)}%`, width: `${toPct(end) - toPct(start)}%` }} />
               {(["start", "end"] as const).map((w) => (
                 <div
                   key={w}
@@ -286,7 +286,7 @@ export function ClipEditor({
                   className="absolute inset-y-0 z-10 -ml-3 flex w-6 cursor-ew-resize items-center justify-center"
                   style={{ left: `${toPct(w === "start" ? start : end)}%` }}
                 >
-                  <div className="h-10 w-2.5 rounded-full bg-pink shadow-[0_0_12px_rgba(255,43,190,0.8)]" />
+                  <div className="h-10 w-2.5 rounded-full bg-accent" />
                 </div>
               ))}
               <div className="pointer-events-none absolute -inset-y-1 z-20 w-0.5 bg-white" style={{ left: `${toPct(t)}%` }} />
@@ -297,9 +297,9 @@ export function ClipEditor({
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2">
               {(["start", "end"] as const).map((w) => (
-                <div key={w} className="flex items-center gap-1.5 rounded-[8px] border border-line bg-ink px-2 py-1.5">
+                <div key={w} className="flex items-center gap-1.5 rounded-[8px] border border-line bg-surface-2 px-2 py-1.5">
                   <span className="w-9 text-[11px] capitalize text-dim">{w}</span>
-                  <button className="rounded-md px-2 py-1 text-xs hover:bg-white/5" onClick={() => nudge(w, -0.5)}>−.5</button>
+                  <button className="rounded-md px-2 py-1 text-xs hover:bg-surface-2" onClick={() => nudge(w, -0.5)}>−.5</button>
                   <input
                     className="w-full bg-transparent text-center font-mono text-xs outline-none"
                     type="number"
@@ -311,7 +311,7 @@ export function ClipEditor({
                       else setEnd(Math.min(duration, Math.max(v, start + 2)));
                     }}
                   />
-                  <button className="rounded-md px-2 py-1 text-xs hover:bg-white/5" onClick={() => nudge(w, 0.5)}>+.5</button>
+                  <button className="rounded-md px-2 py-1 text-xs hover:bg-surface-2" onClick={() => nudge(w, 0.5)}>+.5</button>
                 </div>
               ))}
             </div>
@@ -326,7 +326,7 @@ export function ClipEditor({
         {titles.length > 0 && (
           <div className="-mt-3 flex flex-wrap gap-1.5">
             {titles.map((x) => (
-              <button key={x} onClick={() => setTitle(x)} className="rounded-full border border-line px-2.5 py-1 text-[11.5px] text-muted hover:border-pink/40 hover:text-white">
+              <button key={x} onClick={() => setTitle(x)} className="rounded-full border border-line px-2.5 py-1 text-[11.5px] text-muted hover:border-accent/40 hover:text-text">
                 {x}
               </button>
             ))}
@@ -344,9 +344,9 @@ export function ClipEditor({
             </select>
           </Field>
           <Field label="Format">
-            <div className="flex gap-1 rounded-[8px] border border-line bg-ink p-1">
+            <div className="flex gap-1 rounded-[8px] border border-line bg-surface-2 p-1">
               {ASPECTS.map((a) => (
-                <button key={a} onClick={() => setAspect(a)} className={cn("flex-1 rounded-lg py-1.5 text-xs", aspect === a ? "bg-white/10 text-white" : "text-dim")}>
+                <button key={a} onClick={() => setAspect(a)} className={cn("flex-1 rounded-lg py-1.5 text-xs", aspect === a ? "bg-ink text-paper" : "text-dim")}>
                   {a}
                 </button>
               ))}
@@ -355,7 +355,7 @@ export function ClipEditor({
         </div>
         <Field label="Thumbnail">
           <div className="flex items-center gap-3">
-            <div className={cn("w-16 shrink-0 overflow-hidden rounded-lg border border-line bg-ink", aspect === "9:16" ? "aspect-[9/16]" : aspect === "1:1" ? "aspect-square" : "aspect-video")}>
+            <div className={cn("w-16 shrink-0 overflow-hidden rounded-lg border border-line bg-surface-2", aspect === "9:16" ? "aspect-[9/16]" : aspect === "1:1" ? "aspect-square" : "aspect-video")}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               {thumbPreview && <img src={thumbPreview} alt="Thumbnail preview" className="size-full object-cover" />}
             </div>

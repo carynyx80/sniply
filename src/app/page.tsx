@@ -1,27 +1,16 @@
 import { HeroSection } from "@/components/home/hero";
-import {
-  LiveTicker,
-  SectionArena,
-  SectionCTA,
-  SectionDesk,
-  SectionFeed,
-  SectionFlow,
-  SectionIdentity,
-  SectionMoment,
-} from "@/components/home/sections";
+import { SectionBoard, SectionCTA, SectionFeatures, SectionFeed, SectionIdentity, SectionTimeline } from "@/components/home/sections";
 import { Footer } from "@/components/layout/footer";
 
 export default function Home() {
   return (
     <main>
       <HeroSection />
-      <LiveTicker />
-      <SectionMoment />
-      <SectionDesk />
+      <SectionBoard />
+      <SectionTimeline />
+      <SectionFeatures />
       <SectionIdentity />
-      <SectionFlow />
       <SectionFeed />
-      <SectionArena />
       <SectionCTA />
       <Footer />
     </main>

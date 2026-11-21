@@ -4,88 +4,110 @@ import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
 import { useReadContracts } from "wagmi";
 import { formatUnits, type Address } from "viem";
-import { BadgeCheck, CandlestickChart, ExternalLink } from "lucide-react";
-import { EmptyState, PageHeader, Skeleton } from "@/components/ui/primitives";
+import { CandlestickChart } from "lucide-react";
+import { Badge, Board, EmptyState, Note, PageHeader, Skeleton } from "@/components/ui/primitives";
 import { buttonClass } from "@/components/ui/button";
 import { Footer } from "@/components/layout/footer";
 import { erc20Abi, pancakeFactoryAbi } from "@/lib/abis";
-import { explorerBase, PANCAKE_V2 } from "@/lib/chain-config";
+import { PANCAKE_V2 } from "@/lib/chain-config";
 import type { PublicClip, TokenLaunch } from "@/lib/types";
-import { fmtNum, shortAddr, timeAgo } from "@/lib/utils";
+import { fmtNum, timeAgo } from "@/lib/utils";
 
 type Market = TokenLaunch & { clip: PublicClip | null };
+const ZERO = "0x0000000000000000000000000000000000000000";
 
-export default function Markets() {
-  const q = useQuery({ queryKey: ["markets"], queryFn: () => fetch("/api/markets").then((r) => r.json()).then((j) => j.markets as Market[]) });
-  return (
-    <>
-      <main className="mx-auto max-w-6xl px-5 pb-24 pt-8 md:pt-12">
-        <PageHeader
-          eyebrow="Markets" ch="05"
-          title={<>Every market here was <span className="serif text-brand pr-1">confirmed on-chain.</span></>}
-          sub="Only tokens whose launch transaction Sniply verified on BNB Chain are listed. Supply and liquidity are read live from the chain; nothing is estimated or padded."
-        />
-        <div className="mb-6 rounded-[10px] border border-line bg-surface/60 px-4 py-3 text-xs leading-relaxed text-dim">
-          Tokens are highly speculative and can go to zero. Agent reputation reflects clip activity, not token quality. Sniply doesn’t give investment advice.
-        </div>
-        {q.isLoading ? (
-          <Skeleton className="h-64 rounded-[12px]" />
-        ) : !q.data?.length ? (
-          <EmptyState
-            icon={<CandlestickChart className="size-6" />}
-            title="No confirmed markets yet"
-            body="A market appears only after a creator launches a token for a published clip and the transaction is confirmed on BNB Chain."
-            action={<Link href="/studio/clips?tab=published" className={buttonClass("primary", "md")}>Launch from a clip</Link>}
-          />
-        ) : (
-          <div className="overflow-hidden rounded-[12px] border border-line bg-surface">
-            <div className="hidden grid-cols-[2fr_1.2fr_1fr_1fr_1fr] gap-4 border-b border-line px-5 py-3 text-xs text-dim md:grid">
-              <span>Token</span><span>Agent</span><span>Supply</span><span>Liquidity</span><span>Launched</span>
-            </div>
-            {q.data.map((m) => <MarketRow key={m.id} m={m} />)}
-          </div>
-        )}
-      </main>
-      <Footer />
-    </>
-  );
-}
-
-function MarketRow({ m }: { m: Market }) {
+function useMarketReads(m: Market) {
   const pc = PANCAKE_V2[(m.chainId in PANCAKE_V2 ? m.chainId : 97) as keyof typeof PANCAKE_V2];
-  const reads = useReadContracts({
+  const r = useReadContracts({
     contracts: [
       { address: m.tokenAddress as Address, abi: erc20Abi, functionName: "totalSupply", chainId: m.chainId },
       { address: m.tokenAddress as Address, abi: erc20Abi, functionName: "decimals", chainId: m.chainId },
       { address: pc.factory, abi: pancakeFactoryAbi, functionName: "getPair", args: [m.tokenAddress as Address, pc.wrappedNative], chainId: m.chainId },
     ],
   });
-  const supply = reads.data?.[0]?.result as bigint | undefined;
-  const dec = reads.data?.[1]?.result as number | undefined;
-  const pair = reads.data?.[2]?.result as Address | undefined;
-  const hasPool = pair && pair !== "0x0000000000000000000000000000000000000000";
+  return {
+    loading: r.isLoading,
+    supply: r.data?.[0]?.result as bigint | undefined,
+    decimals: r.data?.[1]?.result as number | undefined,
+    pair: r.data?.[2]?.result as Address | undefined,
+  };
+}
+
+function SupplyCell({ m }: { m: Market }) {
+  const { supply, decimals } = useMarketReads(m);
+  return <>{supply !== undefined && decimals !== undefined ? fmtNum(Number(formatUnits(supply, decimals))) : "…"}</>;
+}
+function PoolCell({ m }: { m: Market }) {
+  const { loading, pair } = useMarketReads(m);
+  if (loading) return <span className="text-muted">…</span>;
+  return pair && pair !== ZERO ? <Badge tone="ok">Pool live</Badge> : <Badge>No pool</Badge>;
+}
+
+export default function Markets() {
+  const q = useQuery({ queryKey: ["markets"], queryFn: () => fetch("/api/markets").then((r) => r.json()).then((j) => j.markets as Market[]) });
   return (
-    <Link href={`/market/${m.tokenAddress}`} className="grid grid-cols-2 items-center gap-4 border-b border-line px-5 py-4 last:border-0 hover:bg-white/[0.02] md:grid-cols-[2fr_1.2fr_1fr_1fr_1fr]">
-      <div className="flex items-center gap-3">
-        <div className="relative size-11 shrink-0 overflow-hidden rounded-[8px] bg-ink">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          {m.clip?.thumbnailUrl ? <img src={m.clip.thumbnailUrl} alt="" className="size-full object-cover" /> : <span className="bg-brand grid size-full place-items-center font-bold">{m.symbol[0]}</span>}
-        </div>
-        <div className="min-w-0">
-          <p className="truncate font-medium">{m.name}</p>
-          <p className="font-mono text-xs text-muted">${m.symbol}</p>
-        </div>
-      </div>
-      <div className="text-right text-sm md:text-left">
-        {m.clip?.agent ? <span className="inline-flex items-center gap-1">{m.clip.agent.name}{m.clip.agent.verified && <BadgeCheck className="size-3.5 text-[#7e9bff]" />}</span> : <span className="text-dim">—</span>}
-      </div>
-      <span className="text-sm tabular-nums text-muted">{supply !== undefined && dec !== undefined ? fmtNum(Number(formatUnits(supply, dec))) : "…"}</span>
-      <span className="text-sm text-muted">{reads.isLoading ? "…" : hasPool ? "Pool live" : "No pool"}</span>
-      <span className="flex items-center gap-1.5 text-sm text-muted">
-        {timeAgo(m.confirmedAt)}
-        <a onClick={(e) => e.stopPropagation()} href={`${explorerBase(m.chainId)}/token/${m.tokenAddress}`} target="_blank" rel="noreferrer" aria-label="Explorer" className="hidden md:inline"><ExternalLink className="size-3.5" /></a>
-      </span>
-      <span className="col-span-2 font-mono text-[10.5px] text-dim md:hidden">{shortAddr(m.tokenAddress, 6)}</span>
-    </Link>
+    <>
+      <main className="mx-auto max-w-[1200px] px-4 pt-12 md:px-6 md:pt-16">
+        <PageHeader
+          eyebrow="Markets"
+          title="Every market listed here"
+          accent="was confirmed on-chain."
+          sub="Only tokens whose launch transaction Sniply verified on BNB Chain are listed. Supply and liquidity are read live from the chain. Nothing is estimated or padded."
+        />
+        <Note tone="warn" className="mb-6">
+          Tokens are highly speculative and can go to zero. Agent reputation reflects clip activity, not token quality. Sniply does not give investment advice.
+        </Note>
+        {q.isLoading ? (
+          <Skeleton className="h-64" />
+        ) : !q.data?.length ? (
+          <EmptyState
+            icon={<CandlestickChart className="size-5" />}
+            title="No confirmed markets yet"
+            body="A market appears only after a creator launches a token for a published clip and the transaction is confirmed on BNB Chain."
+            action={<Link href="/studio/clips?tab=published" className={buttonClass("primary", "md")}>Launch from a clip</Link>}
+          />
+        ) : (
+          <Board
+            columns={[
+              { key: "token", label: "Token" },
+              { key: "pool", label: "Status" },
+              { key: "supply", label: "Supply", align: "right" },
+              { key: "chain", label: "Chain", align: "right" },
+              { key: "launched", label: "Launched", align: "right" },
+            ]}
+            rows={q.data.map((m) => ({
+              key: m.id,
+              href: `/market/${m.tokenAddress}`,
+              cells: {
+                token: (
+                  <div className="flex min-w-0 items-center gap-3">
+                    <div className="relative size-10 shrink-0 overflow-hidden rounded-full border border-line-2 bg-surface-3">
+                      {m.clip?.thumbnailUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={m.clip.thumbnailUrl} alt="" className="size-full object-cover" />
+                      ) : (
+                        <span className="display grid size-full place-items-center text-[20px] text-text">{m.symbol[0]}</span>
+                      )}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="flex items-baseline gap-2">
+                        <span className="truncate font-semibold text-text">{m.name}</span>
+                        <span className="font-mono text-[12px] text-muted">${m.symbol}</span>
+                      </p>
+                      <p className="truncate text-[13px] text-muted">{m.clip?.agent ? `${m.clip.agent.name}${m.clip.agent.verified ? " · verified" : ""}` : m.clip?.title ?? "Clip removed"}</p>
+                    </div>
+                  </div>
+                ),
+                pool: <PoolCell m={m} />,
+                supply: <SupplyCell m={m} />,
+                chain: m.chainId === 56 ? "BSC" : "BSC testnet",
+                launched: timeAgo(m.confirmedAt),
+              },
+            }))}
+          />
+        )}
+      </main>
+      <Footer />
+    </>
   );
 }

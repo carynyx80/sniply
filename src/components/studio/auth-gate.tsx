@@ -15,12 +15,11 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   if (loading) return <Skeleton className="h-64" />;
   if (user) return <>{children}</>;
   return (
-    <div className="relative mx-auto mt-10 max-w-md overflow-hidden rounded-[12px] border border-line bg-surface p-8 text-center">
-      <div className="bg-brand absolute -top-24 left-1/2 h-40 w-72 -translate-x-1/2 rounded-full opacity-25 blur-3xl" />
-      <div className="relative mx-auto grid size-14 place-items-center rounded-[10px] border border-line bg-ink">
-        <ShieldCheck className="size-6 text-pink" />
+    <div className="relative mx-auto mt-10 max-w-md overflow-hidden rounded-[14px] border border-line bg-surface p-8 text-center">
+      <div className="relative mx-auto grid size-14 place-items-center rounded-[14px] border border-line bg-surface-2">
+        <ShieldCheck className="size-6 text-accent" />
       </div>
-      <h2 className="relative mt-5 text-xl font-semibold tracking-tight">Sign in to open the Studio</h2>
+      <h2 className="relative mt-5 display text-[28px] leading-tight">Sign in to open the Studio</h2>
       <p className="relative mt-2 text-sm leading-relaxed text-muted">
         Connect a wallet, then sign a free message to prove you own it. No transaction, no gas.
       </p>

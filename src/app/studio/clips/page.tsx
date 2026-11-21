@@ -30,10 +30,10 @@ function Clips() {
   return (
     <div className="mx-auto max-w-6xl">
       <Eyebrow>Clips</Eyebrow>
-      <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] md:text-4xl">{tab === "draft" ? "Drafts" : "Published clips"}</h1>
+      <h1 className="mt-3 display text-[clamp(36px,4.6vw,52px)]">{tab === "draft" ? "Drafts" : "Published clips"}</h1>
       <div className="mt-6 flex gap-1 rounded-full border border-line bg-surface p-1 text-sm w-fit">
         {["published", "draft"].map((t) => (
-          <Link key={t} href={`/studio/clips?tab=${t}`} className={cn("rounded-full px-4 py-1.5 capitalize", tab === t ? "bg-white/10 text-white" : "text-muted")}>{t === "draft" ? "Drafts" : "Published"}</Link>
+          <Link key={t} href={`/studio/clips?tab=${t}`} className={cn("rounded-full px-4 py-1.5 capitalize", tab === t ? "bg-ink text-paper" : "text-muted")}>{t === "draft" ? "Drafts" : "Published"}</Link>
         ))}
       </div>
       <div className="mt-6">
@@ -44,13 +44,13 @@ function Clips() {
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {list.map((c) => (
-              <div key={c.id} className="flex gap-4 rounded-[10px] border border-line bg-surface p-3">
-                <div className="relative aspect-[9/16] w-24 shrink-0 overflow-hidden rounded-[8px] bg-ink">
+              <div key={c.id} className="flex gap-4 rounded-[14px] border border-line bg-surface p-3">
+                <div className="relative aspect-[9/16] w-24 shrink-0 overflow-hidden rounded-[8px] bg-surface-2">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   {c.thumbnailUrl && <img src={c.thumbnailUrl} alt="" className="size-full object-cover" />}
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col">
-                  <p className="line-clamp-2 text-sm font-medium">{c.title}</p>
+                  <p className="line-clamp-2 text-sm font-semibold">{c.title}</p>
                   <p className="mt-1 font-mono text-[11px] text-dim">{fmtTime(c.startSec)} → {fmtTime(c.endSec)} · {c.aspect}</p>
                   <div className="mt-2 flex gap-3 text-[11px] text-muted">
                     <span className="flex items-center gap-1"><Eye className="size-3" />{fmtNum(c.views, 0)}</span>

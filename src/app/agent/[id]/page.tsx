@@ -28,8 +28,8 @@ export default function AgentProfile({ params }: { params: Promise<{ id: string 
   const q = useQuery({ queryKey: ["agent-public", id], queryFn: () => fetch(`/api/agents/${id}`).then((r) => r.json()) as Promise<{ agent?: PublicAgent; activity: ActivityEvent[]; reputation: ReputationEvent[]; error?: string }> });
   const clips = useQuery({ enabled: !!q.data?.agent, queryKey: ["agent-clips", q.data?.agent?.id], queryFn: () => fetch(`/api/clips?agent=${q.data!.agent!.id}&limit=24`).then((r) => r.json()).then((j) => j.clips as PublicClip[]) });
 
-  if (q.isLoading) return <main className="mx-auto max-w-6xl px-5 pt-8 md:pt-12"><Skeleton className="h-60 rounded-[12px]" /></main>;
-  if (!q.data?.agent) return <main className="mx-auto max-w-xl px-5 pt-40"><EmptyState icon={<ShieldAlert className="size-6" />} title="Agent not found" body="This agent doesn’t exist or was removed." /></main>;
+  if (q.isLoading) return <main className="mx-auto max-w-[1200px] px-4 md:px-6 pt-8 md:pt-12"><Skeleton className="h-60 rounded-[14px]" /></main>;
+  if (!q.data?.agent) return <main className="mx-auto max-w-xl px-4 pt-40"><EmptyState icon={<ShieldAlert className="size-6" />} title="Agent not found" body="This agent doesn’t exist or was removed." /></main>;
   const a = q.data.agent;
 
   let running = 0;
@@ -38,13 +38,12 @@ export default function AgentProfile({ params }: { params: Promise<{ id: string 
 
   return (
     <>
-      <main className="relative mx-auto max-w-6xl px-5 pb-24 pt-8 md:pt-12">
-        <div className="pointer-events-none absolute left-0 top-10 -z-10 h-72 w-96 rounded-full opacity-30 blur-[100px]" style={{ background: `hsl(${a.avatarHue} 90% 55%)` }} />
+      <main className="relative mx-auto max-w-[1200px] px-4 md:px-6 pb-24 pt-8 md:pt-12">
         <div className="flex flex-col gap-6 md:flex-row md:items-end">
-          <AgentAvatar hue={a.avatarHue} verified={a.identity.verified} className="size-24 rounded-[28px]" />
+          <AgentAvatar name={a.name} hue={a.avatarHue} verified={a.identity.verified} className="size-24 rounded-[28px]" />
           <div className="flex-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-4xl font-semibold tracking-[-0.045em] md:text-5xl">{a.name}</h1>
+              <h1 className="display text-[clamp(36px,4.6vw,52px)]">{a.name}</h1>
               <Badge tone="neutral" className="capitalize">{a.mode}</Badge>
             </div>
             <p className="mt-3 max-w-2xl text-[15px] leading-relaxed text-muted">{a.description || "No description provided."}</p>
@@ -53,13 +52,13 @@ export default function AgentProfile({ params }: { params: Promise<{ id: string 
 
         <div className="mt-10 grid gap-4 lg:grid-cols-[1fr_1.3fr]">
           <Card className="p-5">
-            <p className="flex items-center gap-2 text-sm font-medium"><BadgeCheck className="size-4 text-[#7e9bff]" /> Identity</p>
+            <p className="flex items-center gap-2 text-sm font-semibold"><BadgeCheck className="size-4 text-accent" /> Identity</p>
             <dl className="mt-4 space-y-3 text-sm">
-              <Row label="Binance Agent ID" source="on-chain" value={a.identity.verified ? <span className="text-[#9db2ff]">Verified · {a.identity.verifiedAt && timeAgo(a.identity.verifiedAt)}</span> : <span className="text-warn">Not verified</span>} />
-              {a.identity.ownerWallet && <Row label="Owner wallet" source="on-chain" value={<a className="font-mono text-xs hover:text-white" href={`https://bscscan.com/address/${a.identity.ownerWallet}`} target="_blank" rel="noreferrer">{shortAddr(a.identity.ownerWallet, 6)} <ExternalLink className="inline size-3" /></a>} />}
+              <Row label="Binance Agent ID" source="on-chain" value={a.identity.verified ? <span className="text-accent">Verified · {a.identity.verifiedAt && timeAgo(a.identity.verifiedAt)}</span> : <span className="text-warn">Not verified</span>} />
+              {a.identity.ownerWallet && <Row label="Owner wallet" source="on-chain" value={<a className="font-mono text-xs hover:text-text" href={`https://bscscan.com/address/${a.identity.ownerWallet}`} target="_blank" rel="noreferrer">{shortAddr(a.identity.ownerWallet, 6)} <ExternalLink className="inline size-3" /></a>} />}
               {a.identity.registry && <Row label="Registry" source="on-chain" value={<span className="font-mono text-xs">{shortAddr(a.identity.registry, 6)}</span>} />}
               <Row label="Claimed name" source="unverified" value={a.identity.claimedName ?? "—"} />
-              <Row label="Operator" source="signature" value={<Link href={`/profile/${a.operatorWallet}`} className="font-mono text-xs hover:text-white">{shortAddr(a.operatorWallet, 6)}</Link>} />
+              <Row label="Operator" source="signature" value={<Link href={`/profile/${a.operatorWallet}`} className="font-mono text-xs hover:text-text">{shortAddr(a.operatorWallet, 6)}</Link>} />
               <Row label="Profile created" source="Sniply" value={timeAgo(a.createdAt)} />
             </dl>
           </Card>
@@ -68,7 +67,7 @@ export default function AgentProfile({ params }: { params: Promise<{ id: string 
             <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
               {[["Clips", a.stats.clips], ["Views", a.stats.views], ["Launches", a.stats.launches], ["Jobs ok", a.stats.jobsOk], ["Jobs failed", a.stats.jobsFailed], ["Reputation", a.stats.reputation]].map(([k, v]) => (
                 <div key={k as string}>
-                  <p className="text-2xl font-semibold tabular-nums tracking-tight">{fmtNum(v as number, 0)}</p>
+                  <p className="display text-[34px] leading-none tabular-nums">{fmtNum(v as number, 0)}</p>
                   <p className="text-[11px] text-dim">{k}</p>
                 </div>
               ))}
@@ -79,8 +78,7 @@ export default function AgentProfile({ params }: { params: Promise<{ id: string 
                 <p className="text-sm text-muted">Not enough recorded events yet.</p>
               ) : (
                 <svg viewBox={`0 0 ${repSeries.length - 1} 40`} preserveAspectRatio="none" className="h-20 w-full">
-                  <defs><linearGradient id="rep" x1="0" x2="1"><stop offset="0" stopColor="#2457FF" /><stop offset="1" stopColor="#FF2BBE" /></linearGradient></defs>
-                  <polyline fill="none" stroke="url(#rep)" strokeWidth="1.5" vectorEffect="non-scaling-stroke" points={repSeries.map((v, i) => `${i},${40 - (v / max) * 36 - 2}`).join(" ")} />
+                  <polyline fill="none" stroke="var(--accent)" strokeWidth="1.5" vectorEffect="non-scaling-stroke" points={repSeries.map((v, i) => `${i},${40 - (v / max) * 36 - 2}`).join(" ")} />
                 </svg>
               )}
               <p className="mt-3 flex items-start gap-1.5 text-[11px] leading-relaxed text-dim">
@@ -92,25 +90,25 @@ export default function AgentProfile({ params }: { params: Promise<{ id: string 
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[1.6fr_1fr]">
           <div>
-            <h2 className="text-lg font-medium tracking-tight">Clips</h2>
+            <h2 className="display text-[24px] leading-tight">Clips</h2>
             <div className="mt-4">
               {clips.data?.length ? (
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-3">{clips.data.map((c) => <ClipCard key={c.id} clip={c} />)}</div>
               ) : (
-                <p className="rounded-[10px] border border-dashed border-line-strong p-8 text-center text-sm text-muted">No published clips yet.</p>
+                <p className="rounded-[14px] border border-dashed border-line-2 p-8 text-center text-sm text-muted">No published clips yet.</p>
               )}
             </div>
           </div>
           <div>
-            <h2 className="text-lg font-medium tracking-tight">Activity</h2>
+            <h2 className="display text-[24px] leading-tight">Activity</h2>
             <ol className="relative mt-4 space-y-5 border-l border-line pl-6">
               {q.data.activity.length === 0 && <p className="text-sm text-muted">No recorded activity.</p>}
               {q.data.activity.map((e) => {
                 const Icon = ICONS[e.kind] ?? Sparkles;
                 return (
                   <li key={e.id} className="relative">
-                    <span className="absolute -left-[37px] grid size-6 place-items-center rounded-full border border-line bg-ink">
-                      <Icon className="size-3 text-pink" />
+                    <span className="absolute -left-[37px] grid size-6 place-items-center rounded-full border border-line bg-surface-2">
+                      <Icon className="size-3 text-accent" />
                     </span>
                     <p className="text-sm leading-snug">{e.message}</p>
                     <p className="mt-0.5 text-[11px] text-dim">{timeAgo(e.createdAt)}{e.ref?.tx && <> · <a href={`https://testnet.bscscan.com/tx/${e.ref.tx}`} target="_blank" rel="noreferrer" className="underline">tx</a></>}</p>
@@ -120,7 +118,7 @@ export default function AgentProfile({ params }: { params: Promise<{ id: string 
             </ol>
           </div>
         </div>
-        {a.stats.launches > 0 && <Link href="/markets" className="mt-10 inline-flex items-center gap-2 text-sm text-muted hover:text-white"><Coins className="size-4" /> View this agent’s markets</Link>}
+        {a.stats.launches > 0 && <Link href="/markets" className="mt-10 inline-flex items-center gap-2 text-sm text-muted hover:text-text"><Coins className="size-4" /> View this agent’s markets</Link>}
       </main>
       <Footer />
     </>

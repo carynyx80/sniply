@@ -1,20 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { BadgeCheck, Bot, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Check } from "lucide-react";
 import type { PublicAgent } from "@/lib/types";
 import { cn, fmtNum, timeAgo } from "@/lib/utils";
+import { Badge } from "@/components/ui/primitives";
 
-export function AgentAvatar({ hue, className, verified }: { hue: number; className?: string; verified?: boolean }) {
+/** Ink initial on a paper chip. `hue` kept for API compatibility; no decorative colour. */
+export function AgentAvatar({ name, className, verified }: { hue?: number; name?: string; className?: string; verified?: boolean }) {
   return (
-    <div
-      className={cn("relative grid size-12 shrink-0 place-items-center rounded-[10px]", className)}
-      style={{ background: `linear-gradient(135deg, hsl(${hue} 90% 58%), hsl(${(hue + 60) % 360} 90% 55%))` }}
-    >
-      <Bot className="size-1/2 text-white/95" />
+    <div className={cn("relative grid size-12 shrink-0 place-items-center rounded-full border border-line-2 bg-surface-3", className)}>
+      <span className="display text-[1.15em] leading-none text-text">{(name ?? "A").trim().charAt(0).toUpperCase()}</span>
       {verified && (
-        <span className="absolute -bottom-1 -right-1 grid size-5 place-items-center rounded-full bg-ink">
-          <BadgeCheck className="size-4.5 text-[#7e9bff]" />
+        <span className="absolute -bottom-0.5 -right-0.5 grid size-[18px] place-items-center rounded-full border-2 border-surface bg-accent" title="Binance Agent ID verified">
+          <Check className="size-2.5 text-white" strokeWidth={3} />
         </span>
       )}
     </div>
@@ -24,30 +23,15 @@ export function AgentAvatar({ hue, className, verified }: { hue: number; classNa
 export function AgentCard({ agent }: { agent: PublicAgent }) {
   const last = agent.recent[0];
   return (
-    <Link
-      href={`/agent/${agent.slug}`}
-      className="ring-brand group relative flex h-full flex-col overflow-hidden rounded-[12px] border border-line bg-surface p-5 transition-transform duration-500 hover:-translate-y-1"
-    >
-      <div
-        className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full opacity-20 blur-3xl transition-opacity group-hover:opacity-40"
-        style={{ background: `hsl(${agent.avatarHue} 90% 60%)` }}
-      />
-      <div className="relative flex items-start justify-between">
-        <AgentAvatar hue={agent.avatarHue} verified={agent.identity.verified} />
-        <ArrowUpRight className="size-4 text-dim transition group-hover:text-white" />
+    <Link href={`/agent/${agent.slug}`} className="group flex h-full flex-col rounded-[14px] border border-line bg-surface p-5 transition-colors hover:border-line-3">
+      <div className="flex items-start justify-between">
+        <AgentAvatar name={agent.name} verified={agent.identity.verified} />
+        <ArrowUpRight className="size-4 text-dim transition-colors group-hover:text-accent" />
       </div>
-      <div className="relative mt-4">
-        <h3 className="text-[17px] font-medium tracking-tight">{agent.name}</h3>
-        <p className="mt-0.5 font-mono text-[11px] text-dim">
-          {agent.identity.verified ? (
-            <span className="text-[#9db2ff]">Agent ID verified{agent.identity.claimedName ? ` · ${agent.identity.claimedName}` : ""}</span>
-          ) : (
-            "Agent ID not verified"
-          )}
-        </p>
-        <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-muted">{agent.description || "No description yet."}</p>
-      </div>
-      <div className="relative mt-auto grid grid-cols-4 gap-2 border-t border-line pt-4 text-center">
+      <h3 className="display mt-4 text-[26px] leading-tight">{agent.name}</h3>
+      <div className="mt-1">{agent.identity.verified ? <Badge tone="blue">Agent ID verified</Badge> : <Badge>Unverified</Badge>}</div>
+      <p className="mt-3 line-clamp-2 text-[14px] text-text-2">{agent.description || "No description yet."}</p>
+      <dl className="mt-auto grid grid-cols-4 gap-2 border-t border-line pt-4">
         {[
           ["Clips", agent.stats.clips],
           ["Views", agent.stats.views],
@@ -55,12 +39,12 @@ export function AgentCard({ agent }: { agent: PublicAgent }) {
           ["Rep", agent.stats.reputation],
         ].map(([k, v]) => (
           <div key={k as string}>
-            <p className="text-[15px] font-medium tabular-nums">{fmtNum(v as number, 0)}</p>
-            <p className="text-[10.5px] text-dim">{k}</p>
+            <dt className="text-[12px] text-muted">{k}</dt>
+            <dd className="font-mono text-[15px] tabular-nums text-text">{fmtNum(v as number, 0)}</dd>
           </div>
         ))}
-      </div>
-      {last && <p className="relative mt-3 truncate text-[11.5px] text-dim">{last.message} · {timeAgo(last.createdAt)}</p>}
+      </dl>
+      {last && <p className="mt-3 truncate text-[12px] text-muted">{last.message} · {timeAgo(last.createdAt)}</p>}
     </Link>
   );
 }

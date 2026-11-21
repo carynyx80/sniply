@@ -3,18 +3,18 @@
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
-import { motion } from "motion/react";
-import { Bot, Clapperboard, Cog, FileText, FileVideo, LayoutGrid, Rocket, Workflow } from "lucide-react";
+import { Bot, Clapperboard, Cog, FileText, FileVideo, LayoutGrid, Plus, Rocket, Workflow } from "lucide-react";
+import { buttonClass } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const items = [
   { href: "/studio", label: "Overview", icon: LayoutGrid, exact: true },
-  { href: "/studio/agents", label: "My Agents", icon: Bot },
-  { href: "/studio/sources", label: "Video Sources", icon: FileVideo },
-  { href: "/studio/jobs", label: "Clip Jobs", icon: Workflow },
+  { href: "/studio/agents", label: "My agents", icon: Bot },
+  { href: "/studio/sources", label: "Video sources", icon: FileVideo },
+  { href: "/studio/jobs", label: "Clip jobs", icon: Workflow },
   { href: "/studio/clips?tab=draft", label: "Drafts", icon: FileText, tab: "draft" },
-  { href: "/studio/clips?tab=published", label: "Published", icon: Clapperboard, tab: "published" },
-  { href: "/studio/launches", label: "Token Launches", icon: Rocket },
+  { href: "/studio/clips?tab=published", label: "Published clips", icon: Clapperboard, tab: "published" },
+  { href: "/studio/launches", label: "Token launches", icon: Rocket },
   { href: "/studio/settings", label: "Settings", icon: Cog },
 ];
 
@@ -37,31 +37,35 @@ function Inner() {
   };
   return (
     <>
-      <aside className="sticky top-[var(--bar-h)] hidden h-[calc(100dvh-var(--bar-h))] w-60 shrink-0 flex-col border-r border-line bg-ink-2 px-3 py-5 lg:flex">
-        <p className="px-2 font-mono text-[10px] uppercase tracking-[0.18em] text-dim">Agent Studio</p>
-        <Link href="/studio/new" className="mt-4 flex h-10 items-center justify-center gap-2 rounded-[8px] bg-pink text-[13px] font-medium shadow-[inset_0_-2px_0_rgba(0,0,0,0.25)] transition hover:bg-[#ff45c8]">
-          <span className="rec-blink size-1.5 rounded-full bg-white" /> New clip job
+      <aside className="sticky top-[var(--header-h)] hidden h-[calc(100dvh-var(--header-h))] w-64 shrink-0 flex-col border-r border-line px-4 py-6 lg:flex">
+        <p className="kicker px-2">Agent studio</p>
+        <Link href="/studio/new" className={cn(buttonClass("primary", "md"), "mt-4 w-full")}>
+          <Plus className="size-4" /> New clip job
         </Link>
-        <nav className="mt-5 space-y-0.5">
+        <nav className="mt-6 space-y-0.5" aria-label="Studio">
           {items.map((i) => {
             const on = isOn(i);
             return (
-              <Link key={i.href} href={i.href} className={cn("relative flex items-center gap-3 rounded-[7px] px-2.5 py-2 text-[13px] transition", on ? "text-white" : "text-muted hover:text-white")}>
-                {on && <motion.span layoutId="studio-active" className="absolute inset-0 rounded-[7px] bg-white/[0.06] ring-1 ring-inset ring-white/10" transition={{ type: "spring", stiffness: 420, damping: 34 }} />}
-                <i.icon className="relative size-4" strokeWidth={1.8} />
-                <span className="relative">{i.label}</span>
+              <Link
+                key={i.href}
+                href={i.href}
+                aria-current={on ? "page" : undefined}
+                className={cn("flex items-center gap-3 rounded-full px-3 py-2 text-[14px] transition-colors", on ? "bg-ink font-semibold text-paper" : "text-text-2 hover:bg-surface-3 hover:text-text")}
+              >
+                <i.icon className="size-4" strokeWidth={1.8} />
+                {i.label}
               </Link>
             );
           })}
         </nav>
-        <div className="mt-auto rounded-[8px] border border-line p-3 text-[11px] leading-relaxed text-dim">
+        <div className="mt-auto rounded-[12px] border border-line-2 bg-surface-2 p-3 text-[13px] text-text-2">
           Agents never move funds. You sign every launch and every trade.
         </div>
       </aside>
-      <div className="sticky top-[var(--bar-h)] z-30 border-b border-line bg-ink/90 backdrop-blur-xl lg:hidden">
-        <div className="no-scrollbar flex gap-1 overflow-x-auto px-3 py-2">
+      <div className="sticky top-[var(--header-h)] z-30 border-b border-line bg-paper/90 backdrop-blur-md lg:hidden">
+        <div className="no-scrollbar flex gap-1 overflow-x-auto px-4 py-2">
           {items.map((i) => (
-            <Link key={i.href} href={i.href} className={cn("flex shrink-0 items-center gap-1.5 rounded-[6px] px-2.5 py-1.5 text-[12px]", isOn(i) ? "bg-white/10 text-white" : "text-muted")}>
+            <Link key={i.href} href={i.href} className={cn("flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[13px]", isOn(i) ? "bg-ink font-semibold text-paper" : "text-text-2")}>
               <i.icon className="size-3.5" /> {i.label}
             </Link>
           ))}

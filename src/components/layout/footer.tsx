@@ -1,44 +1,42 @@
 import Link from "next/link";
-import { LogoMark } from "@/components/logo";
 
 const cols = [
-  { h: "Product", l: [["Explore", "/explore"], ["Markets", "/markets"], ["Studio", "/studio"]] },
-  { h: "Agents", l: [["Agent Arena", "/agents"], ["Leaderboard", "/leaderboard"], ["Register agent", "/studio/agents?new=1"]] },
+  { h: "Product", l: [["Explore", "/explore"], ["Markets", "/markets"], ["Studio", "/studio"], ["New clip", "/studio/new"]] },
+  { h: "Agents", l: [["Agent arena", "/agents"], ["Leaderboard", "/leaderboard"], ["Register an agent", "/studio/agents?new=1"]] },
   { h: "Trust", l: [["Report content", "/report"], ["Security", "/security"], ["System status", "/api/health"]] },
 ];
 
 export function Footer() {
   return (
-    <footer className="relative overflow-hidden border-t border-line bg-ink-2">
-      <div className="mx-auto max-w-[1320px] px-4 md:px-8">
-        <div className="grid gap-10 py-14 md:grid-cols-12">
-          <div className="md:col-span-5">
-            <p className="max-w-sm text-2xl font-semibold leading-tight tracking-[-0.03em]">
-              Where AI agents turn clips into onchain <span className="serif text-pink">Markets,</span> powered by Binance Agent ID.
-            </p>
-            <p className="mt-6 max-w-sm text-xs leading-relaxed text-dim">
-              Tokens are highly speculative and can lose all value. Sniply does not provide investment advice. Agent reputation measures platform activity, not investment quality.
+    <footer className="mt-[88px] border-t border-line-2">
+      <div className="mx-auto max-w-[1200px] px-4 md:px-6">
+        <div className="grid gap-10 py-14 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div>
+            <p className="display max-w-xs text-[26px] leading-[1.1]">
+              Where AI agents turn clips into onchain <span className="accent-line">Markets,</span> powered by Binance Agent ID.
             </p>
           </div>
           {cols.map((c) => (
-            <div key={c.h} className="md:col-span-2">
-              <p className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-dim">{c.h}</p>
-              <ul className="mt-4 space-y-2.5">
+            <div key={c.h}>
+              <p className="kicker">{c.h}</p>
+              <ul className="mt-4 space-y-2">
                 {c.l.map(([t, h]) => (
                   <li key={h}>
-                    <Link href={h} className="text-sm text-muted transition hover:text-white">{t}</Link>
+                    <Link href={h} className="text-[15px] text-text-2 transition-colors hover:text-accent">
+                      {t}
+                    </Link>
                   </li>
                 ))}
               </ul>
             </div>
           ))}
         </div>
-        <div className="flex items-end justify-between gap-4 border-t border-line pb-6 pt-8">
-          <div className="flex items-center gap-3">
-            <LogoMark className="size-10 md:size-14" />
-            <span className="text-[clamp(3rem,12vw,10rem)] font-semibold leading-[0.8] tracking-[-0.07em] text-white/[0.06] select-none">Sniply</span>
-          </div>
-          <span className="hidden pb-2 font-mono text-[10px] uppercase tracking-[0.16em] text-dim md:block">© {new Date().getFullYear()} · BNB Chain</span>
+        <div aria-hidden className="display select-none overflow-hidden border-t border-line pt-6 text-[clamp(120px,26vw,360px)] leading-[0.8] tracking-[-0.04em] text-text">
+          Sniply<span className="text-accent">.</span>
+        </div>
+        <div className="flex flex-col justify-between gap-2 border-t border-line py-6 text-[13px] text-muted md:flex-row">
+          <span>© {new Date().getFullYear()} Sniply. Tokens are highly speculative and can lose all value. Nothing here is investment advice.</span>
+          <span>Built on BNB Chain · Identity via Binance Agent ID</span>
         </div>
       </div>
     </footer>

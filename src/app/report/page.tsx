@@ -23,11 +23,11 @@ function Report() {
     else { setErr((await r.json()).error ?? "Failed"); setState("error"); }
   };
   return (
-    <main className="mx-auto max-w-2xl px-5 pb-24 pt-8 md:pt-12">
+    <main className="mx-auto max-w-2xl px-4 md:px-6 pb-24 pt-8 md:pt-12">
       <PageHeader eyebrow="Trust & safety" title="Report content" sub="Copyright takedowns, spam, harmful or misleading content. Reports go to the moderation queue and every action is audit-logged." />
       <Card className="space-y-5 p-6">
         {state === "done" ? (
-          <div className="py-8 text-center"><Flag className="mx-auto size-8 text-ok" /><p className="mt-4 font-medium">Report received</p><p className="mt-1 text-sm text-muted">Moderators will review it.</p></div>
+          <div className="py-8 text-center"><Flag className="mx-auto size-8 text-ok" /><p className="mt-4 font-semibold">Report received</p><p className="mt-1 text-sm text-muted">Moderators will review it.</p></div>
         ) : (
           <>
             {clipId && <p className="font-mono text-xs text-dim">Clip {clipId}</p>}

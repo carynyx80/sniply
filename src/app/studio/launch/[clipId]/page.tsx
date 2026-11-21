@@ -65,17 +65,17 @@ export default function LaunchPage({ params }: { params: Promise<{ clipId: strin
 
   return (
     <div className="mx-auto max-w-5xl">
-      <Link href="/studio/clips?tab=published" className="flex items-center gap-1.5 text-sm text-muted hover:text-white"><ArrowLeft className="size-4" /> Clips</Link>
+      <Link href="/studio/clips?tab=published" className="flex items-center gap-1.5 text-sm text-muted hover:text-text"><ArrowLeft className="size-4" /> Clips</Link>
       <Eyebrow className="mt-6">Token launchpad · BNB Chain</Eyebrow>
-      <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] md:text-4xl">Launch a market for this clip</h1>
+      <h1 className="mt-3 display text-[clamp(36px,4.6vw,52px)]">Launch a market for this clip</h1>
 
       <div className="mt-8 grid gap-4 lg:grid-cols-[280px_1fr]">
         <Card className="h-fit overflow-hidden">
-          <div className="relative aspect-[9/16] bg-ink">
+          <div className="relative aspect-[9/16] bg-surface-2">
             {clip.data && <video src={`${clip.data.videoUrl}#t=${clip.data.startSec}`} poster={clip.data.thumbnailUrl ?? undefined} muted playsInline controls className="size-full object-cover" />}
           </div>
           <div className="p-4">
-            <p className="text-sm font-medium">{clip.data?.title ?? "…"}</p>
+            <p className="text-sm font-semibold">{clip.data?.title ?? "…"}</p>
             {clip.data?.agent && <p className="mt-1 text-xs text-muted">Agent · {clip.data.agent.name}{clip.data.agent.verified ? " (Agent ID verified)" : ""}</p>}
           </div>
         </Card>
@@ -86,7 +86,7 @@ export default function LaunchPage({ params }: { params: Promise<{ clipId: strin
           {!draft || draft.status === "failed" ? (
             <Card className="space-y-4 p-6">
               <div className="flex items-center justify-between">
-                <h2 className="font-medium">1 · Token metadata</h2>
+                <h2 className="font-semibold">1 · Token metadata</h2>
                 <Button variant="secondary" size="sm" onClick={suggest} disabled={busy !== null}>
                   {busy === "ai" ? <Loader2 className="size-3.5 animate-spin" /> : <Wand2 className="size-3.5" />} Agent suggestion
                 </Button>
@@ -127,8 +127,8 @@ function Steps({ current }: { current: number }) {
     <div className="grid grid-cols-4 gap-1.5">
       {s.map((x, i) => (
         <div key={x}>
-          <div className={cn("h-1 rounded-full", i < current ? "bg-ok" : i === current ? "bg-brand" : "bg-white/10")} />
-          <p className={cn("mt-2 text-[11px]", i <= current ? "text-white" : "text-dim")}>{x}</p>
+          <div className={cn("h-1 rounded-full", i < current ? "bg-ok" : i === current ? "bg-ink text-paper" : "bg-surface-3")} />
+          <p className={cn("mt-2 text-[11px]", i <= current ? "text-text" : "text-dim")}>{x}</p>
         </div>
       ))}
     </div>
@@ -189,9 +189,9 @@ function LaunchPanel({ draft }: { draft: TokenDraft }) {
     <Card className="space-y-5 p-6">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="bg-brand grid size-12 place-items-center rounded-[10px] text-lg font-bold">{draft.symbol[0]}</span>
+          <span className="bg-ink text-paper grid size-12 place-items-center rounded-[14px] text-lg font-bold">{draft.symbol[0]}</span>
           <div>
-            <p className="font-medium">{draft.name}</p>
+            <p className="font-semibold">{draft.name}</p>
             <p className="font-mono text-sm text-muted">${draft.symbol} · BEP-20</p>
           </div>
         </div>
@@ -200,16 +200,16 @@ function LaunchPanel({ draft }: { draft: TokenDraft }) {
       <p className="text-sm leading-relaxed text-muted">{draft.description}</p>
 
       {!enabled ? (
-        <div className="rounded-[10px] border border-warn/30 bg-warn/[0.06] p-5">
-          <p className="flex items-center gap-2 text-sm font-medium text-warn"><Lock className="size-4" /> Launching is not available yet</p>
+        <div className="rounded-[14px] border border-warn/30 bg-warn/[0.06] p-5">
+          <p className="flex items-center gap-2 text-sm font-semibold text-warn"><Lock className="size-4" /> Launching is not available yet</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Your draft is saved. On-chain launch is turned off until an operator configures a verified launch contract on BNB Chain. We haven’t found official integration docs for an existing BNB launchpad, so Sniply ships an auditable factory contract (<span className="font-mono text-xs">contracts/SniplyTokenFactory.sol</span>). It needs a security review and a testnet deployment before it can be switched on.
           </p>
           <p className="mt-3 text-xs text-dim">Nothing has been submitted to any chain. No fees have been charged.</p>
         </div>
       ) : launch ? (
-        <div className="rounded-[10px] border border-ok/30 bg-ok/[0.06] p-5">
-          <p className="flex items-center gap-2 font-medium text-ok"><CheckCircle2 className="size-4" /> Confirmed on {activeChain.name}</p>
+        <div className="rounded-[14px] border border-ok/30 bg-ok/[0.06] p-5">
+          <p className="flex items-center gap-2 font-semibold text-ok"><CheckCircle2 className="size-4" /> Confirmed on {activeChain.name}</p>
           <p className="mt-2 break-all font-mono text-xs text-muted">{launch.tokenAddress}</p>
           <div className="mt-4 flex flex-wrap gap-2">
             <Link href={`/market/${launch.tokenAddress}`} className={buttonClass("primary", "sm")}>Open market</Link>
@@ -217,21 +217,21 @@ function LaunchPanel({ draft }: { draft: TokenDraft }) {
           </div>
         </div>
       ) : attempt ? (
-        <div className="rounded-[10px] border border-line bg-ink p-5">
-          <p className="flex items-center gap-2 text-sm font-medium">
-            {attempt.status === "reverted" ? <AlertTriangle className="size-4 text-bad" /> : <Loader2 className="size-4 animate-spin text-pink" />}
+        <div className="rounded-[14px] border border-line bg-surface-2 p-5">
+          <p className="flex items-center gap-2 text-sm font-semibold">
+            {attempt.status === "reverted" ? <AlertTriangle className="size-4 text-bad" /> : <Loader2 className="size-4 animate-spin text-accent" />}
             {attempt.status === "pending" && "Waiting for on-chain confirmation…"}
             {attempt.status === "unknown" && "Status uncertain — retrying RPC…"}
             {attempt.status === "reverted" && "Launch failed"}
           </p>
           {attempt.error && <p className="mt-2 text-xs text-bad">{attempt.error}</p>}
-          <a href={`${explorerBase(attempt.chainId)}/tx/${attempt.txHash}`} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 font-mono text-xs text-muted hover:text-white">
+          <a href={`${explorerBase(attempt.chainId)}/tx/${attempt.txHash}`} target="_blank" rel="noreferrer" className="mt-3 inline-flex items-center gap-1 font-mono text-xs text-muted hover:text-text">
             {attempt.txHash.slice(0, 18)}… <ExternalLink className="size-3" />
           </a>
         </div>
       ) : (
         <>
-          <dl className="divide-y divide-line rounded-[10px] border border-line text-sm">
+          <dl className="divide-y divide-line rounded-[14px] border border-line text-sm">
             <Row k="Network" v={activeChain.name} />
             <Row k="Launch contract" v={<span className="font-mono text-xs">{LAUNCHPAD.factoryAddress}</span>} />
             <Row k="Creation fee" v={fee.data !== undefined ? `${formatEther(fee.data)} ${activeChain.nativeCurrency.symbol}` : "Reading…"} />

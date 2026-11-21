@@ -2,146 +2,168 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useBlockNumber } from "wagmi";
-import { Bot, CandlestickChart, Clapperboard, Compass, House, Plus, Trophy } from "lucide-react";
-import { LogoMark } from "@/components/logo";
+import { Menu, Plus, X } from "lucide-react";
+import { Logo } from "@/components/logo";
 import { ConnectButton } from "@/components/web3/connect-button";
 import { activeChain } from "@/lib/chain-config";
-import { cn } from "@/lib/utils";
+import { cn, fmtNum } from "@/lib/utils";
 
 const NAV = [
-  { href: "/", label: "Home", icon: House, ch: "01" },
-  { href: "/explore", label: "Explore", icon: Compass, ch: "02" },
-  { href: "/agents", label: "Agents", icon: Bot, ch: "03" },
-  { href: "/studio", label: "Create", icon: Clapperboard, ch: "04" },
-  { href: "/markets", label: "Markets", icon: CandlestickChart, ch: "05" },
-  { href: "/leaderboard", label: "Ranks", icon: Trophy, ch: "06" },
+  { href: "/explore", label: "Explore" },
+  { href: "/agents", label: "Agents" },
+  { href: "/studio", label: "Create" },
+  { href: "/markets", label: "Markets" },
+  { href: "/leaderboard", label: "Leaderboard" },
 ];
 
-const isActive = (pathname: string, href: string) =>
-  href === "/" ? pathname === "/" : pathname === href || pathname.startsWith(`${href}/`) || (href === "/agents" && pathname.startsWith("/agent/")) || (href === "/markets" && pathname.startsWith("/market/"));
+const isActive = (p: string, href: string) =>
+  p === href || p.startsWith(`${href}/`) || (href === "/agents" && p.startsWith("/agent/")) || (href === "/markets" && p.startsWith("/market/"));
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   return (
-    <div className="min-h-dvh lg:pl-[var(--rail-w)]">
-      <Rail pathname={pathname} />
-      <StatusBar pathname={pathname} />
-      <div className="pb-[calc(64px+env(safe-area-inset-bottom))] lg:pb-0">{children}</div>
-      <TabBar pathname={pathname} />
+    <div className="min-h-dvh">
+      <Header pathname={pathname} />
+      <Ticker />
+      {children}
     </div>
   );
 }
 
-/* ── Desktop channel rail ── */
-function Rail({ pathname }: { pathname: string }) {
+function Header({ pathname }: { pathname: string }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => setOpen(false), [pathname]);
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
+
   return (
-    <aside className="fixed inset-y-0 left-0 z-50 hidden w-[var(--rail-w)] flex-col items-center border-r border-line bg-ink py-4 lg:flex">
-      <Link href="/" aria-label="Sniply home" className="grid size-11 place-items-center rounded-[10px] transition hover:bg-white/[0.05]">
-        <LogoMark className="size-7" />
-      </Link>
-      <div className="mt-3 h-px w-8 bg-line" />
-      <nav className="mt-3 flex flex-1 flex-col gap-1">
-        {NAV.map((n) => {
-          const on = isActive(pathname, n.href);
-          return (
+    <>
+      <header className="sticky top-0 z-50 h-[var(--header-h)] border-b border-line bg-paper/90 backdrop-blur-md">
+        <div className="mx-auto grid h-full max-w-[1200px] grid-cols-[1fr_auto] items-center px-4 md:px-6 min-[860px]:grid-cols-[1fr_auto_1fr]">
+          <Link href="/" aria-label="Sniply home" className="justify-self-start">
+            <Logo />
+          </Link>
+
+          <nav className="hidden items-center gap-1 min-[860px]:flex" aria-label="Main">
+            {NAV.map((n) => {
+              const on = isActive(pathname, n.href);
+              return (
+                <Link
+                  key={n.href}
+                  href={n.href}
+                  aria-current={on ? "page" : undefined}
+                  className={cn(
+                    "rounded-full px-3.5 py-1.5 text-[14px] transition-colors",
+                    on ? "bg-ink font-semibold text-paper" : "text-text-2 hover:bg-surface-3 hover:text-text",
+                  )}
+                >
+                  {n.label}
+                </Link>
+              );
+            })}
+          </nav>
+
+          <div className="flex items-center gap-1.5 justify-self-end">
             <Link
-              key={n.href}
-              href={n.href}
-              className={cn(
-                "group relative flex w-[60px] flex-col items-center gap-1 rounded-[10px] py-2.5 transition-colors",
-                on ? "text-white" : "text-dim hover:text-white",
-              )}
+              href="/studio/new"
+              aria-label="New clip"
+              title="New clip"
+              className="hidden size-9 place-items-center rounded-full text-text-2 transition-colors hover:bg-surface-3 hover:text-text sm:grid"
             >
-              {on && (
-                <motion.span
-                  layoutId="rail-active"
-                  className="absolute inset-0 rounded-[10px] bg-white/[0.06] ring-1 ring-inset ring-white/10"
-                  transition={{ type: "spring", stiffness: 420, damping: 34 }}
-                />
-              )}
-              {on && <motion.span layoutId="rail-tick" className="absolute -left-[8px] top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r bg-pink" />}
-              <n.icon className="relative size-[19px]" strokeWidth={on ? 2.1 : 1.7} />
-              <span className="relative text-[10px] font-medium tracking-tight">{n.label}</span>
+              <Plus className="size-[18px]" />
             </Link>
-          );
-        })}
-      </nav>
-      <Link
-        href="/studio/new"
-        aria-label="New clip"
-        className="grid size-11 place-items-center rounded-[10px] bg-pink text-white shadow-[inset_0_-2px_0_rgba(0,0,0,0.25),0_8px_24px_-6px_rgba(255,43,190,0.7)] transition hover:scale-105"
-      >
-        <Plus className="size-5" strokeWidth={2.4} />
-      </Link>
-    </aside>
+            <ConnectButton />
+            <button
+              aria-label={open ? "Close menu" : "Open menu"}
+              aria-expanded={open}
+              onClick={() => setOpen((o) => !o)}
+              className="grid size-9 place-items-center rounded-full border border-line-2 bg-surface text-text min-[860px]:hidden"
+            >
+              {open ? <X className="size-4" /> : <Menu className="size-4" />}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+            className="fixed inset-x-0 bottom-0 top-[var(--header-h)] z-40 overflow-y-auto bg-paper px-4 pb-10 pt-4 min-[860px]:hidden"
+          >
+            <nav className="flex flex-col" aria-label="Mobile">
+              {[{ href: "/", label: "Home" }, ...NAV, { href: "/studio/new", label: "New clip" }].map((n) => {
+                const on = n.href === "/" ? pathname === "/" : isActive(pathname, n.href);
+                return (
+                  <Link key={n.href} href={n.href} className="flex items-center justify-between border-b border-line py-4">
+                    <span className={cn("display text-[34px]", on && "accent-line")}>{n.label}</span>
+                    {on && <span className="kicker">Current</span>}
+                  </Link>
+                );
+              })}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
 
-/* ── Top status bar (live chain HUD) ── */
-function StatusBar({ pathname }: { pathname: string }) {
-  const current = NAV.find((n) => isActive(pathname, n.href));
+/** 34px ink ticker tape with live items only. */
+function Ticker() {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-  const block = useBlockNumber({ chainId: activeChain.id, watch: true, query: { enabled: mounted, refetchInterval: 6_000 } });
-
-  return (
-    <header className="sticky top-0 z-40 flex h-[var(--bar-h)] items-center justify-between gap-3 border-b border-line bg-ink/80 px-3 backdrop-blur-xl md:px-5">
-      <div className="flex min-w-0 items-center gap-3">
-        <Link href="/" className="flex items-center gap-2 lg:hidden" aria-label="Sniply home">
-          <LogoMark className="size-6" />
-          <span className="text-[17px] font-semibold tracking-[-0.04em]">Sniply</span>
-        </Link>
-        <div className="hidden items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] lg:flex">
-          <span className="font-semibold text-white">Sniply</span>
-          <span className="text-faint">/</span>
-          <span className="text-muted">{current ? `CH.${current.ch} ${current.label}` : pathname.split("/")[1] || "home"}</span>
-        </div>
-      </div>
-      <div className="flex items-center gap-2 md:gap-4">
-        <div className="hidden items-center gap-4 font-mono text-[10.5px] uppercase tracking-[0.12em] text-dim md:flex">
-          <span className="flex items-center gap-1.5">
-            <span className={cn("size-1.5 rounded-full", block.data ? "bg-ok" : "bg-faint")} />
-            {activeChain.id === 56 ? "BSC" : "BSC Testnet"}
-          </span>
-          <span className="tabular-nums text-muted" title="Latest block, read live from BNB Chain">
-            BLK {block.data ? `#${block.data.toLocaleString()}` : "—"}
-          </span>
-        </div>
-        <ConnectButton />
-      </div>
-    </header>
+  const block = useBlockNumber({ chainId: activeChain.id, watch: true, query: { enabled: mounted } });
+  const stats = useQuery({
+    queryKey: ["stats"],
+    queryFn: () => fetch("/api/stats").then((r) => r.json()) as Promise<{ clips: number; agents: number; verified: number; launches: number }>,
+    refetchInterval: 60_000,
+  });
+  const markets = useQuery({
+    queryKey: ["markets"],
+    queryFn: () => fetch("/api/markets").then((r) => r.json()).then((j) => j.markets as { symbol: string; name: string }[]),
+  });
+  const s = stats.data;
+  const base: [string, string, string][] = [
+    ["BLK", activeChain.id === 56 ? "BSC block" : "BSC testnet block", block.data ? `#${block.data.toLocaleString()}` : "…"],
+    ["CLP", "Clips published", s ? fmtNum(s.clips, 0) : "…"],
+    ["AGT", "Agents", s ? fmtNum(s.agents, 0) : "…"],
+    ["AID", "Verified Agent IDs", s ? fmtNum(s.verified, 0) : "…"],
+    ["LCH", "Confirmed launches", s ? fmtNum(s.launches, 0) : "…"],
+    ["FEE", "Sniply trading fee", "0%"],
+    ...(markets.data ?? []).slice(0, 8).map((m) => [m.symbol, m.name, "Live"] as [string, string, string]),
+  ];
+  // Repeat so the strip is always full, then duplicate for a seamless loop.
+  const items = Array.from({ length: Math.max(2, Math.ceil(12 / base.length)) }, () => base).flat();
+  const row = (k: string) => (
+    <div className="flex shrink-0 items-center" aria-hidden={k === "b"}>
+      {items.map(([sym, label, fig], i) => (
+        <span key={`${k}${i}`} className="flex items-center gap-2 px-4 text-[12px]">
+          <span className="font-mono font-semibold text-paper">{sym}</span>
+          <span className="text-paper/60">{label}</span>
+          <span className="font-mono tabular-nums text-paper">{fig}</span>
+          <span className="ml-4 size-[3px] rounded-full bg-paper/40" />
+        </span>
+      ))}
+    </div>
   );
-}
-
-/* ── Mobile bottom tab bar ── */
-function TabBar({ pathname }: { pathname: string }) {
-  const items = [NAV[0], NAV[1], { href: "/studio/new", label: "Clip", icon: Plus, ch: "" }, NAV[4], NAV[2]];
   return (
-    <nav className="pb-safe fixed inset-x-0 bottom-0 z-50 border-t border-line bg-ink/90 backdrop-blur-xl lg:hidden">
-      <div className="mx-auto grid h-16 max-w-md grid-cols-5 items-center px-2">
-        {items.map((n) => {
-          const center = n.href === "/studio/new";
-          const on = !center && isActive(pathname, n.href);
-          if (center)
-            return (
-              <Link key={n.href} href={n.href} aria-label="New clip" className="flex justify-center">
-                <span className="grid size-12 place-items-center rounded-[14px] bg-pink shadow-[inset_0_-2px_0_rgba(0,0,0,0.25),0_8px_24px_-6px_rgba(255,43,190,0.8)] active:scale-95">
-                  <Plus className="size-6" strokeWidth={2.4} />
-                </span>
-              </Link>
-            );
-          return (
-            <Link key={n.href} href={n.href} className={cn("relative flex flex-col items-center gap-1 py-1.5", on ? "text-white" : "text-dim")}>
-              <n.icon className="size-[21px]" strokeWidth={on ? 2.1 : 1.7} />
-              <span className="text-[10px] font-medium">{n.label}</span>
-              {on && <motion.span layoutId="tab-dot" className="absolute -top-[9px] h-[2px] w-6 rounded-full bg-pink" />}
-            </Link>
-          );
-        })}
+    <div className="marquee-wrap h-[var(--ticker-h)] overflow-hidden bg-ink" aria-label="Live platform figures">
+      <div className="marquee h-full items-center">
+        {row("a")}
+        {row("b")}
       </div>
-    </nav>
+    </div>
   );
 }

@@ -71,14 +71,14 @@ function Admin() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-semibold tracking-[-0.04em]">Platform administration</h1>
+      <h1 className="display text-[clamp(36px,4.6vw,52px)]">Platform administration</h1>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-6">
         {stats.map(([k, v, Icon]) => (
-          <Card key={k} className="p-4"><Icon className="size-4 text-muted" /><p className="mt-3 text-2xl font-semibold tabular-nums">{v}</p><p className="text-[11px] text-dim">{k}</p></Card>
+          <Card key={k} className="p-4"><Icon className="size-4 text-muted" /><p className="mt-3 display text-[34px] leading-none tabular-nums">{v}</p><p className="text-[11px] text-dim">{k}</p></Card>
         ))}
       </div>
       <Card className="flex flex-wrap items-center gap-x-6 gap-y-2 p-4 text-xs">
-        <span className="flex items-center gap-2 font-medium"><Activity className="size-4 text-ok" /> Platform health</span>
+        <span className="flex items-center gap-2 font-semibold"><Activity className="size-4 text-ok" /> Platform health</span>
         {health.data && (
           <>
             <span>DB: <span className="text-muted">{health.data.database}</span></span>
@@ -91,7 +91,7 @@ function Admin() {
 
       <div className="no-scrollbar flex gap-1 overflow-x-auto">
         {([["reports", "Reports", Flag], ["clips", "Clips", Clapperboard], ["jobs", "Processing", Activity], ["tx", "Failed transactions", AlertTriangle], ["audit", "Audit log", ShieldAlert]] as const).map(([k, l, I]) => (
-          <button key={k} onClick={() => setTab(k)} className={cn("flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm", tab === k ? "bg-white/10" : "text-muted")}><I className="size-3.5" />{l}</button>
+          <button key={k} onClick={() => setTab(k)} className={cn("flex shrink-0 items-center gap-1.5 rounded-full px-4 py-2 text-sm", tab === k ? "bg-surface-3" : "text-muted")}><I className="size-3.5" />{l}</button>
         ))}
       </div>
 
@@ -101,7 +101,7 @@ function Admin() {
             <div className="flex-1">
               <div className="flex items-center gap-2"><Badge tone={r.reason === "copyright" ? "warn" : "neutral"}>{r.reason}</Badge><Badge tone={r.status === "open" ? "brand" : "neutral"}>{r.status}</Badge><span className="text-xs text-dim">{timeAgo(r.createdAt)}</span></div>
               <p className="mt-2 text-sm">{r.details}</p>
-              {r.clipId && <Link href={`/explore?clip=${r.clipId}`} className="font-mono text-xs text-muted hover:text-white">clip {r.clipId.slice(0, 8)}</Link>}
+              {r.clipId && <Link href={`/explore?clip=${r.clipId}`} className="font-mono text-xs text-muted hover:text-text">clip {r.clipId.slice(0, 8)}</Link>}
             </div>
             {r.status === "open" && (
               <div className="flex gap-2">

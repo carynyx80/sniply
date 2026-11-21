@@ -194,7 +194,7 @@ function NewJob() {
   return (
     <div className="mx-auto max-w-6xl">
       <Eyebrow>New clip job</Eyebrow>
-      <h1 className="mt-3 text-3xl font-semibold tracking-[-0.04em] md:text-4xl">
+      <h1 className="mt-3 display text-[clamp(36px,4.6vw,52px)]">
         {phase === "review" ? "Review your agent’s picks" : "Turn footage into moments"}
       </h1>
 
@@ -207,26 +207,25 @@ function NewJob() {
               ref={dropRef}
               onDragOver={(e) => {
                 e.preventDefault();
-                dropRef.current?.classList.add("border-pink/60");
+                dropRef.current?.classList.add("border-accent/60");
               }}
-              onDragLeave={() => dropRef.current?.classList.remove("border-pink/60")}
+              onDragLeave={() => dropRef.current?.classList.remove("border-accent/60")}
               onDrop={(e) => {
                 e.preventDefault();
-                dropRef.current?.classList.remove("border-pink/60");
+                dropRef.current?.classList.remove("border-accent/60");
                 onFile(e.dataTransfer.files?.[0] ?? null);
               }}
-              className="group relative flex min-h-[340px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[12px] border-2 border-dashed border-line-strong bg-surface p-6 text-center transition-colors hover:border-pink/40"
+              className="group relative flex min-h-[340px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[14px] border-2 border-dashed border-line-2 bg-surface p-6 text-center transition-colors hover:border-accent/40"
             >
               <input type="file" accept="video/mp4,video/quicktime,video/webm,video/x-matroska" className="sr-only" onChange={(e) => onFile(e.target.files?.[0] ?? null)} />
               {localUrl ? (
-                <video src={localUrl} className="max-h-[300px] w-full rounded-[10px] object-contain" controls muted playsInline />
+                <video src={localUrl} className="max-h-[300px] w-full rounded-[14px] object-contain" controls muted playsInline />
               ) : (
                 <>
-                  <div className="dot-grid absolute inset-0 [mask-image:radial-gradient(circle,black,transparent_70%)]" />
-                  <div className="relative grid size-16 place-items-center rounded-[10px] border border-line bg-ink transition group-hover:scale-105">
+                  <div className="relative grid size-16 place-items-center rounded-[14px] border border-line bg-surface-2 transition group-hover:scale-105">
                     <Upload className="size-6" />
                   </div>
-                  <p className="relative mt-5 text-lg font-medium">Drop a video or click to browse</p>
+                  <p className="relative mt-5 text-lg font-semibold">Drop a video or click to browse</p>
                   <p className="relative mt-1 text-sm text-muted">MP4, MOV, WebM, MKV · up to 500 MB</p>
                 </>
               )}
@@ -246,25 +245,25 @@ function NewJob() {
               {prefs && (
                 <div className="grid grid-cols-3 gap-2 text-center text-xs">
                   {[["Length", `${prefs.clipMinSec}–${prefs.clipMaxSec}s`], ["Picks", prefs.suggestions], ["Format", prefs.aspect]].map(([k, v]) => (
-                    <div key={k as string} className="rounded-[8px] border border-line bg-ink py-2.5">
-                      <p className="font-medium">{v}</p>
+                    <div key={k as string} className="rounded-[8px] border border-line bg-surface-2 py-2.5">
+                      <p className="font-semibold">{v}</p>
                       <p className="text-dim">{k}</p>
                     </div>
                   ))}
                 </div>
               )}
               {file && (
-                <div className="flex items-center gap-3 rounded-[8px] border border-line bg-ink p-3 text-sm">
+                <div className="flex items-center gap-3 rounded-[8px] border border-line bg-surface-2 p-3 text-sm">
                   <FileVideo className="size-4 text-muted" />
                   <span className="min-w-0 flex-1 truncate">{file.name}</span>
                   <span className="text-xs text-dim">{(file.size / 1048576).toFixed(1)} MB</span>
                 </div>
               )}
-              <label className="flex cursor-pointer gap-3 rounded-[8px] border border-line bg-ink p-3.5 text-[13px] leading-relaxed text-muted">
+              <label className="flex cursor-pointer gap-3 rounded-[8px] border border-line bg-surface-2 p-3.5 text-[13px] leading-relaxed text-muted">
                 <input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} className="mt-0.5 size-4 accent-[#FF2BBE]" />
                 <span>
                   I own this video or have permission to clip and publish it. I won’t upload DRM-protected or unauthorized
-                  content. <span className="text-white">Required.</span>
+                  content. <span className="text-text">Required.</span>
                 </span>
               </label>
               {error && (
@@ -285,15 +284,15 @@ function NewJob() {
         {(phase === "uploading" || phase === "analyzing") && (
           <motion.div key="run" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="mt-8">
             <Card className="relative overflow-hidden p-8 md:p-12">
-              <div className="bg-brand-animated absolute inset-x-0 top-0 h-px" />
+              <div className="bg-line-2 absolute inset-x-0 top-0 h-px" />
               <div className="flex flex-col items-center text-center">
-                <div className="relative grid size-20 place-items-center rounded-[12px] border border-line bg-ink">
-                  <Loader2 className="size-7 animate-spin text-pink" />
+                <div className="relative grid size-20 place-items-center rounded-[14px] border border-line bg-surface-2">
+                  <Loader2 className="size-7 animate-spin text-accent" />
                 </div>
-                <p className="mt-6 text-xl font-medium tracking-tight">{stage}…</p>
+                <p className="mt-6 text-xl font-semibold tracking-tight">{stage}…</p>
                 <p className="mt-1 text-sm text-muted">{phase === "uploading" ? "Validating the container and storing your file." : "Measuring audio energy, onsets, excitement and visual change."}</p>
-                <div className="mt-8 h-1.5 w-full max-w-md overflow-hidden rounded-full bg-white/5">
-                  <motion.div className="bg-brand h-full" animate={{ width: `${Math.round(progress * 100)}%` }} />
+                <div className="mt-8 h-1.5 w-full max-w-md overflow-hidden rounded-full bg-surface-3">
+                  <motion.div className="bg-ink text-paper h-full" animate={{ width: `${Math.round(progress * 100)}%` }} />
                 </div>
                 <p className="mt-2 font-mono text-xs text-dim">{Math.round(progress * 100)}%</p>
               </div>
@@ -305,7 +304,7 @@ function NewJob() {
           <motion.div key="fail" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="mt-8">
             <Card className="p-8 text-center">
               <AlertTriangle className="mx-auto size-8 text-bad" />
-              <p className="mt-4 text-lg font-medium">The job couldn’t finish</p>
+              <p className="mt-4 text-lg font-semibold">The job couldn’t finish</p>
               <p className="mx-auto mt-2 max-w-md text-sm text-muted">{error}</p>
               <Button className="mt-6" variant="secondary" onClick={() => { setPhase("pick"); router.replace("/studio/new"); }}>
                 Try another file
@@ -320,7 +319,7 @@ function NewJob() {
               <>
                 <div className="flex flex-wrap items-center gap-2 text-sm text-muted">
                   <CheckCircle2 className="size-4 text-ok" />
-                  {candidates.length} candidate moment{candidates.length === 1 ? "" : "s"} from <span className="text-white">{asset.filename}</span>
+                  {candidates.length} candidate moment{candidates.length === 1 ? "" : "s"} from <span className="text-text">{asset.filename}</span>
                   {job?.signalsSummary && <Badge>{job.signalsSummary.bins} bins analyzed</Badge>}
                 </div>
                 {signals && <SignalStrip signals={signals} candidates={candidates} duration={asset.durationSec ?? 1} />}
@@ -371,8 +370,8 @@ function Stepper({ phase }: { phase: string }) {
   return (
     <div className="no-scrollbar mt-6 flex gap-2 overflow-x-auto">
       {steps.map((s, i) => (
-        <div key={s} className={cn("flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-xs", i === idx ? "border-pink/40 bg-pink/10 text-white" : i < idx ? "border-line text-muted" : "border-line text-dim")}>
-          <span className={cn("grid size-4 place-items-center rounded-full text-[9px]", i < idx ? "bg-ok text-ink" : i === idx ? "bg-pink" : "bg-white/10")}>{i < idx ? "✓" : i + 1}</span>
+        <div key={s} className={cn("flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-xs", i === idx ? "border-accent/40 bg-accent/10 text-white" : i < idx ? "border-line text-muted" : "border-line text-dim")}>
+          <span className={cn("grid size-4 place-items-center rounded-full text-[9px]", i < idx ? "bg-ok text-ink" : i === idx ? "bg-accent" : "bg-surface-3")}>{i < idx ? "✓" : i + 1}</span>
           {s}
         </div>
       ))}
@@ -392,8 +391,8 @@ function SignalStrip({ signals, candidates, duration }: { signals: number[]; can
           <div key={i} className="flex-1 rounded-[1px] bg-white/20" style={{ height: `${Math.max(4, b * 100)}%` }} />
         ))}
         {candidates.map((c, i) => (
-          <div key={c.id} className="absolute -inset-y-1 rounded border border-pink bg-pink/15" style={{ left: `${(c.startSec / duration) * 100}%`, width: `${((c.endSec - c.startSec) / duration) * 100}%` }}>
-            <span className="absolute -top-4 left-0 font-mono text-[9px] text-pink">#{i + 1}</span>
+          <div key={c.id} className="absolute -inset-y-1 rounded border border-accent bg-accent/15" style={{ left: `${(c.startSec / duration) * 100}%`, width: `${((c.endSec - c.startSec) / duration) * 100}%` }}>
+            <span className="absolute -top-4 left-0 font-mono text-[9px] text-accent">#{i + 1}</span>
           </div>
         ))}
       </div>
@@ -406,7 +405,7 @@ function CandidateCard({ c, rank, url, onEdit }: { c: ClipCandidate; rank: numbe
   return (
     <Card className="group overflow-hidden">
       <div
-        className="relative aspect-video bg-ink"
+        className="relative aspect-video bg-surface-2"
         onMouseEnter={() => {
           const v = ref.current;
           if (!v) return;
@@ -425,7 +424,7 @@ function CandidateCard({ c, rank, url, onEdit }: { c: ClipCandidate; rank: numbe
           className="size-full object-cover"
         />
         <span className="absolute left-3 top-3 rounded-full bg-black/60 px-2 py-0.5 font-mono text-[10.5px] backdrop-blur">#{rank}</span>
-        <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-pink/90 px-2 py-0.5 text-[10.5px] font-semibold">
+        <span className="absolute right-3 top-3 flex items-center gap-1 rounded-full bg-accent/90 px-2 py-0.5 text-[10.5px] font-semibold">
           <Sparkles className="size-3" /> {Math.round(c.score * 100)}
         </span>
         <span className="absolute bottom-3 left-3 rounded bg-black/60 px-1.5 py-0.5 font-mono text-[10.5px]">
@@ -433,7 +432,7 @@ function CandidateCard({ c, rank, url, onEdit }: { c: ClipCandidate; rank: numbe
         </span>
       </div>
       <div className="p-4">
-        <p className="line-clamp-1 text-sm font-medium">{c.suggestedTitle}</p>
+        <p className="line-clamp-1 text-sm font-semibold">{c.suggestedTitle}</p>
         <ul className="mt-2 space-y-1">
           {c.reasons.slice(0, 2).map((r) => (
             <li key={r} className="text-xs text-muted">• {r}</li>

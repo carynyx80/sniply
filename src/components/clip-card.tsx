@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { BadgeCheck, Eye, Heart, Coins } from "lucide-react";
+import { Eye, Heart } from "lucide-react";
 import type { PublicClip } from "@/lib/types";
 import { cn, fmtNum, shortAddr } from "@/lib/utils";
 
+/** Paper card with the clip as a framed print, caption set below in ink. */
 export function ClipCard({ clip, className }: { clip: PublicClip; className?: string }) {
   const vref = useRef<HTMLVideoElement>(null);
   const [hover, setHover] = useState(false);
@@ -27,57 +28,47 @@ export function ClipCard({ clip, className }: { clip: PublicClip; className?: st
       href={`/explore?clip=${clip.id}`}
       onMouseEnter={play}
       onMouseLeave={stop}
-      className={cn(
-        "ring-brand group relative block aspect-[9/16] overflow-hidden rounded-[12px] border border-line bg-surface",
-        className,
-      )}
+      className={cn("group block overflow-hidden rounded-[14px] border border-line bg-surface transition-colors hover:border-line-3", className)}
     >
-      {clip.thumbnailUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={clip.thumbnailUrl} alt="" className="absolute inset-0 size-full object-cover" loading="lazy" />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-blue/30 to-pink/20" />
-      )}
-      <video
-        ref={vref}
-        src={`${clip.videoUrl}#t=${clip.startSec},${clip.endSec}`}
-        muted
-        playsInline
-        preload="none"
-        onTimeUpdate={(e) => {
-          const v = e.currentTarget;
-          if (v.currentTime >= clip.endSec) v.currentTime = clip.startSec;
-        }}
-        className={cn("absolute inset-0 size-full object-cover transition-opacity duration-500", hover ? "opacity-100" : "opacity-0")}
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent" />
-
-      {clip.token && (
-        <span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-black/60 px-2 py-1 font-mono text-[10.5px] backdrop-blur">
-          <Coins className="size-3 text-pink" /> ${clip.token.symbol}
+      <div className="relative aspect-[4/5] overflow-hidden border-b border-line bg-surface-3">
+        {clip.thumbnailUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={clip.thumbnailUrl} alt="" className="absolute inset-0 size-full object-cover" loading="lazy" />
+        )}
+        <video
+          ref={vref}
+          src={`${clip.videoUrl}#t=${clip.startSec},${clip.endSec}`}
+          muted
+          playsInline
+          preload="none"
+          onTimeUpdate={(e) => {
+            const v = e.currentTarget;
+            if (v.currentTime >= clip.endSec) v.currentTime = clip.startSec;
+          }}
+          className={cn("absolute inset-0 size-full object-cover transition-opacity duration-300", hover ? "opacity-100" : "opacity-0")}
+        />
+        {clip.token && (
+          <span className="absolute left-2.5 top-2.5 rounded-full bg-surface px-2 py-0.5 font-mono text-[11px] font-semibold text-text">${clip.token.symbol}</span>
+        )}
+        <span className="absolute bottom-2.5 right-2.5 rounded-full bg-surface/90 px-2 py-0.5 font-mono text-[11px] text-text">
+          {Math.round(clip.endSec - clip.startSec)}s
         </span>
-      )}
-
-      <div className="absolute inset-x-0 bottom-0 p-3.5">
-        <p className="line-clamp-2 text-[14px] font-medium leading-snug">{clip.title}</p>
-        <div className="mt-2 flex items-center gap-1.5 text-[11.5px] text-white/70">
+      </div>
+      <div className="p-3.5">
+        <p className="line-clamp-2 text-[15px] font-semibold leading-snug text-text">{clip.title}</p>
+        <p className="mt-1 truncate text-[13px] text-muted">
           {clip.agent ? (
             <>
-              <span className="size-3.5 rounded-full" style={{ background: `hsl(${clip.agent.avatarHue} 90% 60%)` }} />
-              <span className="truncate">{clip.agent.name}</span>
-              {clip.agent.verified && <BadgeCheck className="size-3.5 shrink-0 text-[#7e9bff]" />}
+              {clip.agent.name}
+              {clip.agent.verified && <span className="text-accent"> · verified</span>}
             </>
           ) : (
             <span className="font-mono">{shortAddr(clip.creatorWallet)}</span>
           )}
-        </div>
-        <div className="mt-2 flex items-center gap-3 text-[11px] text-white/60">
-          <span className="flex items-center gap-1">
-            <Eye className="size-3" /> {fmtNum(clip.views, 0)}
-          </span>
-          <span className="flex items-center gap-1">
-            <Heart className="size-3" /> {fmtNum(clip.likes, 0)}
-          </span>
+        </p>
+        <div className="mt-2.5 flex items-center gap-3 font-mono text-[12px] text-muted">
+          <span className="flex items-center gap-1"><Eye className="size-3" /> {fmtNum(clip.views, 0)}</span>
+          <span className="flex items-center gap-1"><Heart className="size-3" /> {fmtNum(clip.likes, 0)}</span>
         </div>
       </div>
     </Link>
