@@ -8,7 +8,7 @@ import { cn, fmtNum, timeAgo } from "@/lib/utils";
 export function AgentAvatar({ hue, className, verified }: { hue: number; className?: string; verified?: boolean }) {
   return (
     <div
-      className={cn("relative grid size-12 shrink-0 place-items-center rounded-2xl", className)}
+      className={cn("relative grid size-12 shrink-0 place-items-center rounded-[10px]", className)}
       style={{ background: `linear-gradient(135deg, hsl(${hue} 90% 58%), hsl(${(hue + 60) % 360} 90% 55%))` }}
     >
       <Bot className="size-1/2 text-white/95" />
@@ -26,7 +26,7 @@ export function AgentCard({ agent }: { agent: PublicAgent }) {
   return (
     <Link
       href={`/agent/${agent.slug}`}
-      className="ring-brand group relative flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-surface p-5 transition-transform duration-500 hover:-translate-y-1"
+      className="ring-brand group relative flex h-full flex-col overflow-hidden rounded-[12px] border border-line bg-surface p-5 transition-transform duration-500 hover:-translate-y-1"
     >
       <div
         className="pointer-events-none absolute -right-16 -top-16 size-48 rounded-full opacity-20 blur-3xl transition-opacity group-hover:opacity-40"

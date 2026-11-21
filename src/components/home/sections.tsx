@@ -1,402 +1,516 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "motion/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
+import { useBlockNumber } from "wagmi";
 import {
-  ArrowRight,
+  ArrowUpRight,
   BadgeCheck,
+  Bot,
   Captions,
-  Fingerprint,
   Film,
-  Gauge,
+  Fingerprint,
   Layers,
-  Rocket,
   ScanLine,
+  Scissors,
   ShieldCheck,
   Sparkles,
-  UserCheck,
   Wand2,
-  Bot,
-  Clapperboard,
 } from "lucide-react";
 import { Eyebrow, Reveal, EmptyState, Skeleton } from "@/components/ui/primitives";
 import { MagneticLink, buttonClass } from "@/components/ui/button";
 import { ClipCard } from "@/components/clip-card";
-import { AgentCard } from "@/components/agent-card";
+import { AgentAvatar } from "@/components/agent-card";
+import { activeChain, AGENT_ID_REGISTRY } from "@/lib/chain-config";
 import type { PublicAgent, PublicClip } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, fmtNum, shortAddr } from "@/lib/utils";
 
-/* ───────────── A — The Moment ───────────── */
+const Wrap = ({ children, className }: { children: React.ReactNode; className?: string }) => (
+  <div className={cn("mx-auto max-w-[1320px] px-4 md:px-8", className)}>{children}</div>
+);
+
+function SectionTitle({ ch, label, children, aside }: { ch: string; label: string; children: React.ReactNode; aside?: React.ReactNode }) {
+  return (
+    <div className="grid gap-6 border-t border-line pt-6 lg:grid-cols-12">
+      <div className="lg:col-span-3">
+        <Reveal>
+          <Eyebrow ch={ch}>{label}</Eyebrow>
+        </Reveal>
+      </div>
+      <div className="lg:col-span-9">
+        <Reveal delay={0.05}>
+          <h2 className="text-[clamp(2.1rem,5.2vw,4.6rem)] font-semibold leading-[0.92] tracking-[-0.055em]">{children}</h2>
+        </Reveal>
+        {aside && (
+          <Reveal delay={0.1}>
+            <div className="mt-6 max-w-xl text-[16px] leading-relaxed text-muted">{aside}</div>
+          </Reveal>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ───────────── Live ticker (real data only) ───────────── */
+export function LiveTicker() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const block = useBlockNumber({ chainId: activeChain.id, watch: true, query: { enabled: mounted } });
+  const stats = useQuery({ queryKey: ["stats"], queryFn: () => fetch("/api/stats").then((r) => r.json()) as Promise<{ clips: number; agents: number; verified: number; launches: number }> });
+  const s = stats.data;
+  const items = [
+    ["Live block", block.data ? `#${block.data.toLocaleString()}` : "—"],
+    ["Network", activeChain.name],
+    ["Clips published", s ? fmtNum(s.clips, 0) : "—"],
+    ["Agents", s ? fmtNum(s.agents, 0) : "—"],
+    ["Verified Agent IDs", s ? fmtNum(s.verified, 0) : "—"],
+    ["Confirmed launches", s ? fmtNum(s.launches, 0) : "—"],
+    ["Agent ID registry", shortAddr(AGENT_ID_REGISTRY.address, 4)],
+    ["Sniply trading fee", "0%"],
+  ];
+  const row = (
+    <div className="flex shrink-0 items-center">
+      {items.map(([k, v]) => (
+        <span key={k} className="flex items-center gap-2.5 px-6 font-mono text-[11px] uppercase tracking-[0.14em]">
+          <span className="text-dim">{k}</span>
+          <span className="tabular-nums text-white">{v}</span>
+          <span className="ml-4 size-1 rounded-full bg-pink" />
+        </span>
+      ))}
+    </div>
+  );
+  return (
+    <div className="overflow-hidden border-b border-line bg-ink-2 py-3" aria-label="Live platform stats">
+      <div className="marquee">
+        {row}
+        {row}
+      </div>
+    </div>
+  );
+}
+
+/* ───────────── CH.02 — The Moment (scroll-scrubbed film strip) ───────────── */
 export function SectionMoment() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
-  const x1 = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]);
-  const x2 = useTransform(scrollYProgress, [0, 1], ["-30%", "0%"]);
-
-  const frames = Array.from({ length: 9 });
+  const x = useTransform(scrollYProgress, [0, 1], ["10%", "-38%"]);
+  const head = useTransform(scrollYProgress, [0.15, 0.75], ["0%", "100%"]);
+  const frames = Array.from({ length: 14 });
+  const HOT = 7;
   return (
-    <section ref={ref} className="relative overflow-hidden py-32 md:py-44">
-      <div className="mx-auto max-w-6xl px-5">
-        <Reveal>
-          <Eyebrow>01 — The moment</Eyebrow>
-        </Reveal>
-        <Reveal delay={0.05}>
-          <h2 className="mt-6 max-w-4xl text-[clamp(2.2rem,6vw,5rem)] font-semibold leading-[0.98] tracking-[-0.05em]">
-            Three hours of stream. <span className="text-muted">Twenty seconds</span>{" "}
-            <span className="text-brand">everyone remembers.</span>
-          </h2>
-        </Reveal>
-        <Reveal delay={0.1}>
-          <p className="mt-6 max-w-xl text-[17px] leading-relaxed text-muted">
-            Every video hides a handful of moments that move culture. Sniply agents find them, frame them, and give
-            them a home — with you approving every step.
-          </p>
-        </Reveal>
-      </div>
+    <section ref={ref} className="relative overflow-hidden py-24 md:py-36">
+      <Wrap>
+        <SectionTitle
+          ch="02"
+          label="The moment"
+          aside="Every long video hides a few seconds that move culture. Sniply agents find them, frame them and hand them to you for approval."
+        >
+          Three hours of stream. <span className="text-white/35">Twenty seconds</span> <span className="serif text-pink">everyone remembers.</span>
+        </SectionTitle>
+      </Wrap>
 
-      <div className="mt-20 space-y-3 [mask-image:linear-gradient(90deg,transparent,black_15%,black_85%,transparent)]">
-        {[x1, x2].map((x, row) => (
-          <motion.div key={row} style={{ x }} className="flex w-[160%] gap-3">
-            {frames.map((_, i) => {
-              const hot = (row === 0 && i === 4) || (row === 1 && i === 6);
-              return (
+      <div className="relative mt-16">
+        <motion.div style={{ x }} className="flex gap-2 pl-4 md:pl-8">
+          {frames.map((_, i) => {
+            const hot = i === HOT;
+            return (
+              <div key={i} className={cn("relative shrink-0", hot ? "w-[340px] md:w-[440px]" : "w-[200px] md:w-[260px]")}>
                 <div
-                  key={i}
-                  className={cn(
-                    "relative aspect-video flex-1 overflow-hidden rounded-2xl border",
-                    hot ? "border-pink/70 shadow-[0_0_60px_-10px_rgba(255,43,190,0.6)]" : "border-line opacity-50",
-                  )}
+                  className={cn("relative aspect-video overflow-hidden rounded-[6px] border", hot ? "viewfinder border-pink" : "border-line opacity-55 saturate-50")}
                   style={{
-                    background: `radial-gradient(120% 90% at ${20 + ((i * 37) % 60)}% ${30 + ((i * 23) % 40)}%, ${
-                      ["rgba(36,87,255,.5)", "rgba(129,43,255,.45)", "rgba(255,43,190,.35)"][(i + row) % 3]
-                    }, transparent 60%), #0d0d16`,
+                    background: `radial-gradient(120% 90% at ${20 + ((i * 37) % 60)}% ${30 + ((i * 23) % 40)}%, ${["rgba(36,87,255,.55)", "rgba(129,43,255,.5)", "rgba(255,43,190,.4)"][i % 3]}, transparent 60%), #0d0d16`,
                   }}
                 >
-                  <span className="absolute bottom-2 left-2 font-mono text-[10px] text-white/50">
-                    {String(row * 2 + 1).padStart(2, "0")}:{String((i * 7) % 60).padStart(2, "0")}:{String((i * 13) % 60).padStart(2, "0")}
-                  </span>
                   {hot && (
-                    <span className="absolute right-2 top-2 flex items-center gap-1 rounded-full bg-pink px-2 py-0.5 text-[10px] font-semibold">
-                      <Sparkles className="size-3" /> moment
-                    </span>
+                    <>
+                      <span className="absolute left-3 top-3 flex items-center gap-1.5 rounded-[3px] bg-pink px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider">
+                        <Sparkles className="size-3" /> Highlight 0.94
+                      </span>
+                      <span className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-[4px] bg-black/70 px-2 py-1 text-sm font-semibold">no way that actually worked</span>
+                    </>
                   )}
                 </div>
-              );
-            })}
-          </motion.div>
-        ))}
+                <div className="mt-2 flex justify-between font-mono text-[10px] text-dim">
+                  <span>{`02:${String(30 + i).padStart(2, "0")}:${String((i * 13) % 60).padStart(2, "0")}`}</span>
+                  <span>{hot ? <span className="text-pink">● CLIP</span> : `F${String(i * 240).padStart(5, "0")}`}</span>
+                </div>
+              </div>
+            );
+          })}
+        </motion.div>
+        {/* scrubber */}
+        <Wrap className="mt-10">
+          <div className="relative h-px bg-line">
+            <motion.div style={{ width: head }} className="absolute left-0 top-0 h-px bg-pink" />
+            <motion.div style={{ left: head }} className="absolute -top-[5px] size-[11px] -translate-x-1/2 rounded-full border-2 border-pink bg-ink" />
+          </div>
+          <div className="mt-3 flex justify-between font-mono text-[10px] uppercase tracking-[0.14em] text-dim">
+            <span>00:00:00</span>
+            <span>Scroll to scrub</span>
+            <span>03:00:00</span>
+          </div>
+        </Wrap>
       </div>
     </section>
   );
 }
 
-/* ───────────── B — Meet your agent ───────────── */
-const agentSkills = [
-  { icon: ScanLine, t: "Highlight detection", d: "Fuses audio energy, scene changes and speech intensity — not just loudness." },
-  { icon: Captions, t: "Subtitles & titles", d: "Transcribes speech, writes captions and proposes titles you can edit." },
-  { icon: Film, t: "Clip extraction", d: "Frames vertical or horizontal cuts with clean in/out points and a thumbnail." },
-  { icon: Wand2, t: "Token drafts", d: "Suggests a name, ticker and description — never a price promise." },
-];
-
-export function SectionAgent() {
+/* ───────────── CH.03 — The desk (bento) ───────────── */
+export function SectionDesk() {
   return (
-    <section className="relative py-28 md:py-40">
-      <div className="mx-auto grid max-w-6xl gap-16 px-5 md:grid-cols-[1fr_1.1fr] md:items-center">
-        <div>
-          <Reveal>
-            <Eyebrow>02 — Meet your agent</Eyebrow>
+    <section className="py-24 md:py-36">
+      <Wrap>
+        <SectionTitle ch="03" label="Meet your agent" aside="Configure an agent once with its sources, clip length and caption style. It works through footage you’re authorized to process and hands you a shortlist to review.">
+          Not a chatbot. <span className="serif text-white/90">A clipping partner</span> with a name.
+        </SectionTitle>
+
+        <div className="mt-14 grid gap-3 md:grid-cols-6">
+          {/* detection */}
+          <Reveal className="md:col-span-4">
+            <Tile label="Highlight detection" icon={ScanLine} className="h-full">
+              <p className="max-w-md text-sm text-muted">Fuses loudness, sudden sound onsets, excitement relative to the surrounding minute, and scene changes. Loudness alone never decides.</p>
+              <Waveform />
+            </Tile>
           </Reveal>
-          <Reveal delay={0.05}>
-            <h2 className="mt-6 text-[clamp(2rem,4.6vw,3.8rem)] font-semibold leading-[1] tracking-[-0.045em]">
-              Not a chatbot. <br />A clipping partner with a name.
-            </h2>
+          <Reveal className="md:col-span-2" delay={0.05}>
+            <Tile label="Subtitles & titles" icon={Captions} className="h-full">
+              <div className="mt-auto space-y-2">
+                {["The reaction at 2:41", "Clutch in the final circle", "He did NOT see that coming"].map((t, i) => (
+                  <div key={t} className={cn("rounded-[6px] border px-3 py-2 text-[13px]", i === 0 ? "border-pink/60 bg-pink/10" : "border-line text-muted")}>
+                    {t}
+                  </div>
+                ))}
+              </div>
+            </Tile>
           </Reveal>
-          <Reveal delay={0.1}>
-            <p className="mt-6 max-w-md text-[16px] leading-relaxed text-muted">
-              Configure an agent once — sources, clip length, caption style — and it works through footage you are
-              authorized to process, then hands you a reviewed shortlist.
-            </p>
+          <Reveal className="md:col-span-2" delay={0.05}>
+            <Tile label="Clip editor" icon={Scissors} className="h-full">
+              <TrimMini />
+            </Tile>
           </Reveal>
-          <Reveal delay={0.15}>
-            <Link href="/studio" className={cn(buttonClass("secondary", "md"), "mt-8")}>
-              Open Agent Studio <ArrowRight className="size-4" />
-            </Link>
+          <Reveal className="md:col-span-2" delay={0.1}>
+            <Tile label="Token drafts" icon={Wand2} className="h-full">
+              <div className="mt-auto rounded-[8px] border border-line bg-ink p-3">
+                <div className="flex items-center gap-2.5">
+                  <span className="bg-brand grid size-8 place-items-center rounded-[6px] text-xs font-bold">N</span>
+                  <div>
+                    <p className="text-sm font-semibold">$NOWAY</p>
+                    <p className="font-mono text-[10px] uppercase text-dim">Draft · awaiting you</p>
+                  </div>
+                </div>
+                <p className="mt-3 text-[11.5px] leading-relaxed text-dim">Names and descriptions only. Price promises are rejected.</p>
+              </div>
+            </Tile>
+          </Reveal>
+          <Reveal className="md:col-span-2" delay={0.15}>
+            <Tile label="Permission scopes" icon={ShieldCheck} className="h-full">
+              <div className="mt-auto space-y-1.5 font-mono text-[11px] uppercase tracking-[0.08em]">
+                {[["Draft clips", true], ["Draft tokens", true], ["Publish w/o review", false], ["Spend funds", false]].map(([k, v]) => (
+                  <div key={k as string} className="flex items-center justify-between rounded-[5px] bg-white/[0.03] px-2.5 py-1.5">
+                    <span className="text-muted">{k}</span>
+                    <span className={v ? "text-ok" : "text-faint"}>{v ? "ON" : k === "Spend funds" ? "LOCKED" : "OFF"}</span>
+                  </div>
+                ))}
+              </div>
+            </Tile>
           </Reveal>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2">
-          {agentSkills.map((s, i) => (
-            <Reveal key={s.t} delay={0.06 * i}>
-              <div className="ring-brand group relative h-full rounded-3xl border border-line bg-surface p-6 transition-transform duration-500 hover:-translate-y-1">
-                <div className="grid size-11 place-items-center rounded-2xl border border-line bg-ink transition-colors group-hover:border-pink/40">
-                  <s.icon className="size-5 text-white" />
-                </div>
-                <h3 className="mt-5 text-[17px] font-medium tracking-tight">{s.t}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{s.d}</p>
-              </div>
-            </Reveal>
+      </Wrap>
+    </section>
+  );
+}
+
+function Tile({ label, icon: Icon, children, className }: { label: string; icon: typeof ScanLine; children: React.ReactNode; className?: string }) {
+  return (
+    <div className={cn("viewfinder group flex min-h-[260px] flex-col gap-4 rounded-[10px] border border-line bg-surface p-5 transition-colors hover:border-line-strong", className)}>
+      <div className="flex items-center justify-between">
+        <span className="font-mono text-[10.5px] uppercase tracking-[0.16em] text-dim">{label}</span>
+        <Icon className="size-4 text-muted transition group-hover:text-pink" />
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function Waveform() {
+  const bars = Array.from({ length: 96 }, (_, i) => {
+    const x = i / 96;
+    const base = 0.18 + 0.16 * Math.abs(Math.sin(i * 1.3)) + 0.1 * Math.abs(Math.sin(i * 0.27));
+    const spike = x > 0.6 && x < 0.74 ? 0.55 * Math.sin(((x - 0.6) / 0.14) * Math.PI) : 0;
+    return Math.round(Math.min(1, base + spike) * 1000) / 1000;
+  });
+  return (
+    <div className="relative mt-auto">
+      <div className="flex h-28 items-end gap-[2px]">
+        {bars.map((h, i) => {
+          const hot = i / 96 > 0.6 && i / 96 < 0.74;
+          return (
+            <motion.div
+              key={i}
+              className={cn("flex-1 rounded-[1px]", hot ? "bg-pink" : "bg-white/15")}
+              initial={{ height: "8%" }}
+              whileInView={{ height: `${h * 100}%` }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: i * 0.006, ease: [0.16, 1, 0.3, 1] }}
+            />
+          );
+        })}
+      </div>
+      <div className="absolute -inset-y-2 left-[60%] w-[14%] rounded-[4px] border border-pink bg-pink/10" />
+      <div className="mt-3 flex justify-between font-mono text-[10px] uppercase tracking-[0.12em] text-dim">
+        <span className="hidden sm:inline">energy · onsets · excitement · scene</span><span className="sm:hidden">fused signal</span>
+        <span className="text-pink">2:41:08 → 2:41:28</span>
+      </div>
+    </div>
+  );
+}
+
+function TrimMini() {
+  return (
+    <div className="mt-auto">
+      <div className="relative h-14 rounded-[6px] bg-ink">
+        <div className="absolute inset-0 flex items-center gap-[2px] px-1 opacity-50">
+          {Array.from({ length: 40 }).map((_, i) => (
+            <div key={i} className="flex-1 rounded-[1px] bg-white/20" style={{ height: `${30 + 50 * Math.abs(Math.sin(i * 0.8))}%` }} />
           ))}
         </div>
+        <motion.div
+          className="absolute inset-y-0 rounded-[5px] border-2 border-pink bg-pink/10"
+          initial={{ left: "15%", right: "55%" }}
+          whileInView={{ left: "28%", right: "30%" }}
+          viewport={{ once: true }}
+          transition={{ duration: 1.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <span className="absolute -left-[5px] top-1/2 h-8 w-[7px] -translate-y-1/2 rounded-full bg-pink" />
+          <span className="absolute -right-[5px] top-1/2 h-8 w-[7px] -translate-y-1/2 rounded-full bg-pink" />
+        </motion.div>
       </div>
-    </section>
+      <div className="mt-3 grid grid-cols-3 gap-1.5 font-mono text-[10px] uppercase">
+        {["9:16", "16:9", "1:1"].map((a, i) => (
+          <span key={a} className={cn("rounded-[4px] border py-1 text-center", i === 0 ? "border-white/30 text-white" : "border-line text-dim")}>{a}</span>
+        ))}
+      </div>
+    </div>
   );
 }
 
-/* ───────────── C — Identity ───────────── */
+/* ───────────── CH.04 — Identity ───────────── */
 export function SectionIdentity() {
   return (
-    <section className="relative overflow-hidden py-28 md:py-40">
-      <div className="dot-grid absolute inset-0 opacity-60 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
-      <div className="relative mx-auto max-w-6xl px-5">
-        <div className="mx-auto max-w-3xl text-center">
-          <Reveal>
-            <Eyebrow className="justify-center">03 — Identity changes everything</Eyebrow>
-          </Reveal>
-          <Reveal delay={0.05}>
-            <h2 className="mt-6 text-[clamp(2rem,5vw,4.2rem)] font-semibold leading-[1] tracking-[-0.045em]">
-              Every agent carries a <span className="text-brand">verifiable</span> Binance Agent ID.
-            </h2>
-          </Reveal>
-          <Reveal delay={0.1}>
-            <p className="mx-auto mt-6 max-w-xl text-[16px] leading-relaxed text-muted">
-              Ownership is checked on BNB Chain, not claimed in a form. Every clip and launch an agent produces is
-              tied to that identity and recorded in a public activity history.
-            </p>
-          </Reveal>
-        </div>
+    <section className="relative overflow-hidden py-24 md:py-36">
+      <Wrap>
+        <SectionTitle ch="04" label="Identity changes everything" aside="Ownership is checked on BNB Chain, not claimed in a form. Every clip and launch an agent produces is tied to that identity in a public activity history.">
+          Every agent carries a <span className="serif text-blue-soft">verifiable</span> Binance Agent ID.
+        </SectionTitle>
 
-        <Reveal delay={0.15}>
-          <div className="mx-auto mt-16 grid max-w-4xl gap-px overflow-hidden rounded-3xl border border-line bg-line md:grid-cols-2">
-            <div className="bg-surface p-7">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <ShieldCheck className="size-4 text-ok" /> Verified on-chain
+        <Reveal delay={0.1}>
+          <div className="mt-14 grid overflow-hidden rounded-[10px] border border-line lg:grid-cols-[1.1fr_1fr_1fr]">
+            {/* ID card */}
+            <div className="relative overflow-hidden border-b border-line bg-surface p-6 lg:border-b-0 lg:border-r">
+              <div className="absolute -right-20 -top-20 size-60 rounded-full bg-blue/25 blur-3xl" />
+              <div className="relative flex items-center justify-between font-mono text-[10px] uppercase tracking-[0.16em] text-dim">
+                <span>Agent credential</span>
+                <span className="flex items-center gap-1 text-blue-soft"><BadgeCheck className="size-3.5" /> on-chain</span>
               </div>
-              <ul className="mt-5 space-y-3 text-sm text-muted">
-                {["Agent ID ownership (registry balanceOf)", "Operator wallet signature", "Token launch transactions", "Contract addresses & block numbers"].map((t) => (
-                  <li key={t} className="flex items-center gap-3">
-                    <BadgeCheck className="size-4 shrink-0 text-[#7e9bff]" /> {t}
-                  </li>
+              <div className="relative mt-8 flex items-center gap-4">
+                <AgentAvatar hue={225} verified className="size-16 rounded-[12px]" />
+                <div>
+                  <p className="text-2xl font-semibold tracking-[-0.03em]">Your agent</p>
+                  <p className="font-mono text-xs text-dim">your-name.ai · claimed</p>
+                </div>
+              </div>
+              <dl className="relative mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-[8px] border border-line bg-line font-mono text-[10.5px] uppercase">
+                {[["Registry", shortAddr(AGENT_ID_REGISTRY.address, 4)], ["Chain", "BSC · 56"], ["Check", "balanceOf > 0"], ["Signer", "never"]].map(([k, v]) => (
+                  <div key={k} className="bg-ink-2 p-3">
+                    <dt className="text-dim">{k}</dt>
+                    <dd className="mt-1 text-white">{v}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+            <div className="border-b border-line bg-ink-2 p-6 lg:border-b-0 lg:border-r">
+              <div className="flex items-center gap-2 text-sm font-medium"><Fingerprint className="size-4 text-ok" /> Verified on-chain</div>
+              <ul className="mt-6 space-y-4 text-[14px] text-muted">
+                {["Agent ID ownership", "Operator wallet signature", "Token launch transactions", "Contract addresses & block numbers"].map((t) => (
+                  <li key={t} className="flex items-center gap-3 border-b border-line pb-4 last:border-0"><BadgeCheck className="size-4 shrink-0 text-blue-soft" /> {t}</li>
                 ))}
               </ul>
             </div>
-            <div className="bg-surface p-7">
-              <div className="flex items-center gap-2 text-sm font-medium">
-                <Layers className="size-4 text-muted" /> Sniply profile (off-chain)
-              </div>
-              <ul className="mt-5 space-y-3 text-sm text-muted">
-                {["Name, avatar and description", "Clips processed & published", "Engagement on Sniply", "Moderation history"].map((t) => (
-                  <li key={t} className="flex items-center gap-3">
-                    <span className="size-1.5 shrink-0 rounded-full bg-dim" /> {t}
-                  </li>
+            <div className="bg-ink-2 p-6">
+              <div className="flex items-center gap-2 text-sm font-medium"><Layers className="size-4 text-muted" /> Sniply profile · off-chain</div>
+              <ul className="mt-6 space-y-4 text-[14px] text-muted">
+                {["Name, avatar, description", "Clips processed & published", "Engagement on Sniply", "Moderation history"].map((t) => (
+                  <li key={t} className="flex items-center gap-3 border-b border-line pb-4 last:border-0"><span className="size-1.5 shrink-0 rounded-full bg-faint" /> {t}</li>
                 ))}
               </ul>
             </div>
           </div>
-          <p className="mx-auto mt-4 max-w-4xl text-center text-xs text-dim">
-            We always label which is which. Reputation reflects platform activity — never investment quality.
-          </p>
+          <p className="mt-4 font-mono text-[10.5px] uppercase tracking-[0.12em] text-dim">Always labelled. Reputation reflects platform activity, never investment quality.</p>
         </Reveal>
-      </div>
+      </Wrap>
     </section>
   );
 }
 
-/* ───────────── D — Clip to market ───────────── */
-const flow = [
-  { icon: Clapperboard, t: "Source video", d: "Upload footage you have rights to." },
-  { icon: ScanLine, t: "AI clipping", d: "Agent ranks candidate moments." },
-  { icon: UserCheck, t: "Human review", d: "You trim, caption and approve." },
-  { icon: Wand2, t: "Token prep", d: "Agent drafts metadata." },
-  { icon: Fingerprint, t: "Authorized launch", d: "You sign. Chain confirms." },
-  { icon: Gauge, t: "Market discovery", d: "Clip + market go live." },
+/* ───────────── CH.05 — Rundown (clip → market) ───────────── */
+const rundown = [
+  ["Source video", "Upload footage you have the rights to.", "Agent", "00:00"],
+  ["AI clipping", "Candidate moments ranked by fused signals.", "Agent", "00:40"],
+  ["Human review", "Trim, caption, pick the thumbnail, approve.", "You", "02:10"],
+  ["Token preparation", "Agent drafts name, ticker, description.", "Agent", "03:00"],
+  ["Authorized launch", "You sign in your wallet. The chain confirms.", "You", "03:30"],
+  ["Market discovery", "Clip and market go live together.", "Sniply", "04:00"],
 ];
 
 export function SectionFlow() {
-  const ref = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start 0.8", "end 0.5"] });
-  const w = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
   return (
-    <section ref={ref} className="relative py-28 md:py-40">
-      <div className="mx-auto max-w-6xl px-5">
-        <Reveal>
-          <Eyebrow>04 — From clip to market</Eyebrow>
-        </Reveal>
-        <Reveal delay={0.05}>
-          <h2 className="mt-6 max-w-3xl text-[clamp(2rem,4.6vw,3.8rem)] font-semibold leading-[1] tracking-[-0.045em]">
-            Six steps. Two of them are yours, and nothing ships without them.
-          </h2>
-        </Reveal>
-
-        <div className="relative mt-16">
-          <div className="absolute left-0 right-0 top-[27px] hidden h-px bg-line md:block">
-            <motion.div style={{ width: w }} className="bg-brand h-px" />
-          </div>
-          <div className="grid gap-8 md:grid-cols-6 md:gap-4">
-            {flow.map((f, i) => {
-              const human = i === 2 || i === 4;
+    <section className="py-24 md:py-36">
+      <Wrap>
+        <SectionTitle ch="05" label="From clip to market">
+          Six steps. Two of them are <span className="serif text-pink">yours,</span> and nothing ships without them.
+        </SectionTitle>
+        <Reveal delay={0.1}>
+          <div className="mt-14 overflow-hidden rounded-[10px] border border-line">
+            <div className="hidden grid-cols-[70px_1.2fr_2fr_120px_90px] border-b border-line bg-ink-2 px-5 py-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-dim md:grid">
+              <span>#</span><span>Segment</span><span>What happens</span><span>Operator</span><span className="text-right">TC</span>
+            </div>
+            {rundown.map(([t, d, who, tc], i) => {
+              const you = who === "You";
               return (
-                <Reveal key={f.t} delay={0.06 * i}>
-                  <div className="relative flex gap-4 md:block">
-                    <div
-                      className={cn(
-                        "relative z-10 grid size-14 shrink-0 place-items-center rounded-2xl border bg-ink",
-                        human ? "border-pink/60 text-pink" : "border-line-strong",
-                      )}
-                    >
-                      <f.icon className="size-5" />
-                    </div>
-                    <div className="md:mt-5">
-                      <p className="font-mono text-[10.5px] text-dim">0{i + 1}{human && " · you"}</p>
-                      <h3 className="mt-1 text-[15px] font-medium">{f.t}</h3>
-                      <p className="mt-1 text-[13px] leading-relaxed text-muted">{f.d}</p>
-                    </div>
-                  </div>
-                </Reveal>
+                <motion.div
+                  key={t}
+                  initial={{ opacity: 0, x: -16 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.6, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                  className={cn("group grid grid-cols-[44px_1fr] items-center gap-x-4 gap-y-1 border-b border-line px-5 py-5 last:border-0 md:grid-cols-[70px_1.2fr_2fr_120px_90px] md:gap-y-0", you && "bg-pink/[0.04]")}
+                >
+                  <span className={cn("font-mono text-sm tabular-nums", you ? "text-pink" : "text-dim")}>0{i + 1}</span>
+                  <span className="text-lg font-semibold tracking-[-0.02em] md:text-xl">{t}</span>
+                  <span className="col-start-2 text-sm text-muted md:col-start-auto">{d}</span>
+                  <span className="col-start-2 md:col-start-auto">
+                    <span className={cn("rounded-[4px] px-2 py-0.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.1em]", you ? "bg-pink text-white" : "bg-white/[0.06] text-muted")}>{who}</span>
+                  </span>
+                  <span className="hidden text-right font-mono text-xs tabular-nums text-dim md:block">{tc}</span>
+                </motion.div>
               );
             })}
           </div>
-        </div>
-      </div>
+        </Reveal>
+      </Wrap>
     </section>
   );
 }
 
-/* ───────────── E — Feed preview (real data) ───────────── */
+/* ───────────── CH.06 — Feed (real data) ───────────── */
 export function SectionFeed() {
   const { data, isLoading } = useQuery({
     queryKey: ["clips", "home"],
-    queryFn: async () => (await (await fetch("/api/clips?limit=4")).json()).clips as PublicClip[],
+    queryFn: async () => (await (await fetch("/api/clips?limit=5&filter=trending")).json()).clips as PublicClip[],
   });
   return (
-    <section className="relative py-28 md:py-36">
-      <div className="mx-auto max-w-6xl px-5">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div>
-            <Reveal>
-              <Eyebrow>05 — Explore the feed</Eyebrow>
-            </Reveal>
-            <Reveal delay={0.05}>
-              <h2 className="mt-6 text-[clamp(2rem,4.6vw,3.8rem)] font-semibold leading-[1] tracking-[-0.045em]">
-                Fresh off the agents.
-              </h2>
-            </Reveal>
-          </div>
-          <Link href="/explore" className={buttonClass("secondary", "md")}>
-            Open the feed <ArrowRight className="size-4" />
-          </Link>
-        </div>
-        <div className="mt-12">
+    <section className="py-24 md:py-36">
+      <Wrap>
+        <SectionTitle ch="06" label="Explore the feed">
+          Fresh off the <span className="serif">agents.</span>
+        </SectionTitle>
+        <div className="mt-14">
           {isLoading ? (
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="aspect-[9/16] rounded-3xl" />
-              ))}
-            </div>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">{Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="aspect-[9/16]" />)}</div>
           ) : data && data.length > 0 ? (
-            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-              {data.map((c, i) => (
-                <Reveal key={c.id} delay={0.05 * i}>
-                  <ClipCard clip={c} />
-                </Reveal>
-              ))}
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+              {data.map((c, i) => <Reveal key={c.id} delay={0.04 * i}><ClipCard clip={c} /></Reveal>)}
             </div>
           ) : (
             <EmptyState
-              icon={<Film className="size-6" />}
+              icon={<Film className="size-5" />}
               title="The feed is waiting for its first clip"
-              body="Clips appear here only after a creator publishes them. Upload footage you own in the Studio and your agent will propose the best moments."
-              action={
-                <Link href="/studio/new" className={buttonClass("primary", "md")}>
-                  Create the first clip <ArrowRight className="size-4" />
-                </Link>
-              }
+              body="Clips appear here only after a creator publishes them. Upload footage you own and your agent will propose the best moments."
+              action={<Link href="/studio/new" className={buttonClass("signal", "md")}><span className="rec-blink size-1.5 rounded-full bg-white" /> Create the first clip</Link>}
             />
           )}
+          <div className="mt-6 flex justify-end">
+            <Link href="/explore" className="group flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-muted hover:text-white">
+              Open the full feed <ArrowUpRight className="size-3.5 transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+          </div>
         </div>
-      </div>
+      </Wrap>
     </section>
   );
 }
 
-/* ───────────── F — Agent arena (real data) ───────────── */
+/* ───────────── CH.07 — Arena (real data) ───────────── */
 export function SectionArena() {
   const { data, isLoading } = useQuery({
     queryKey: ["agents", "home"],
-    queryFn: async () => (await (await fetch("/api/agents?limit=3")).json()).agents as PublicAgent[],
+    queryFn: async () => (await (await fetch("/api/agents?limit=5")).json()).agents as PublicAgent[],
   });
   return (
-    <section className="relative py-28 md:py-36">
-      <div className="mx-auto max-w-6xl px-5">
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <div>
-            <Reveal>
-              <Eyebrow>06 — Agent Arena</Eyebrow>
-            </Reveal>
-            <Reveal delay={0.05}>
-              <h2 className="mt-6 max-w-2xl text-[clamp(2rem,4.6vw,3.8rem)] font-semibold leading-[1] tracking-[-0.045em]">
-                Reputations earned clip by clip.
-              </h2>
-            </Reveal>
-          </div>
-          <Link href="/agents" className={buttonClass("secondary", "md")}>
-            Enter the arena <ArrowRight className="size-4" />
-          </Link>
-        </div>
-        <div className="mt-12">
+    <section className="py-24 md:py-36">
+      <Wrap>
+        <SectionTitle ch="07" label="Agent Arena">
+          Reputations earned <span className="serif text-white/90">clip by clip.</span>
+        </SectionTitle>
+        <div className="mt-14">
           {isLoading ? (
-            <div className="grid gap-3 md:grid-cols-3">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <Skeleton key={i} className="h-64 rounded-3xl" />
-              ))}
-            </div>
+            <Skeleton className="h-64" />
           ) : data && data.length > 0 ? (
-            <div className="grid gap-3 md:grid-cols-3">
+            <div className="overflow-hidden rounded-[10px] border border-line">
               {data.map((a, i) => (
-                <Reveal key={a.id} delay={0.05 * i}>
-                  <AgentCard agent={a} />
-                </Reveal>
+                <Link key={a.id} href={`/agent/${a.slug}`} className="group grid grid-cols-[32px_auto_1fr_auto] items-center gap-4 border-b border-line bg-surface px-5 py-4 last:border-0 hover:bg-surface-2">
+                  <span className="font-mono text-sm text-dim">{String(i + 1).padStart(2, "0")}</span>
+                  <AgentAvatar hue={a.avatarHue} verified={a.identity.verified} className="size-10" />
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold tracking-tight">{a.name}</p>
+                    <p className="font-mono text-[10.5px] uppercase text-dim">{a.identity.verified ? "Agent ID verified" : "Unverified"} · {a.stats.clips} clips</p>
+                  </div>
+                  <span className="flex items-center gap-3 font-mono text-sm tabular-nums">
+                    {a.stats.reputation} <span className="text-[10px] uppercase text-dim">rep</span>
+                    <ArrowUpRight className="size-4 text-dim group-hover:text-white" />
+                  </span>
+                </Link>
               ))}
             </div>
           ) : (
             <EmptyState
-              icon={<Bot className="size-6" />}
+              icon={<Bot className="size-5" />}
               title="No agents registered yet"
-              body="Agents appear here once an operator registers one in the Studio. Agents with a verified Binance Agent ID get the verified badge."
-              action={
-                <Link href="/studio/agents" className={buttonClass("primary", "md")}>
-                  Register an agent <ArrowRight className="size-4" />
-                </Link>
-              }
+              body="Agents appear here once an operator registers one in the Studio. A verified Binance Agent ID earns the verified badge."
+              action={<Link href="/studio/agents?new=1" className={buttonClass("primary", "md")}>Register an agent</Link>}
             />
           )}
         </div>
-      </div>
+      </Wrap>
     </section>
   );
 }
 
-/* ───────────── G — Final CTA ───────────── */
+/* ───────────── Final CTA ───────────── */
 export function SectionCTA() {
   return (
-    <section className="relative overflow-hidden px-5 py-32 md:py-48">
-      <div className="absolute inset-0 -z-10">
-        <div className="bg-brand-animated absolute left-1/2 top-1/2 h-[420px] w-[820px] max-w-[140vw] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-25 blur-[120px]" />
-      </div>
-      <div className="mx-auto max-w-4xl text-center">
+    <section className="relative overflow-hidden border-t border-line">
+      <div className="desk-grid absolute inset-0 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
+      <div className="bg-brand-animated absolute left-1/2 top-1/2 h-[360px] w-[760px] max-w-[140vw] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-20 blur-[120px]" />
+      <Wrap className="relative py-28 md:py-44">
         <Reveal>
-          <h2 className="text-[clamp(2.6rem,8vw,6.5rem)] font-semibold leading-[0.95] tracking-[-0.055em]">
-            The next viral moment <span className="text-brand">is waiting.</span>
+          <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-pink">● Standing by</p>
+        </Reveal>
+        <Reveal delay={0.05}>
+          <h2 className="mt-6 text-[clamp(3rem,10vw,9rem)] font-semibold leading-[0.86] tracking-[-0.065em]">
+            The Next Viral Moment <span className="serif text-brand pr-[0.06em]">Is Waiting.</span>
           </h2>
         </Reveal>
-        <Reveal delay={0.1}>
-          <div className="mt-12 flex justify-center">
-            <MagneticLink href="/studio/new">
-              <Rocket className="size-4" /> Create Your First Clip
+        <Reveal delay={0.12}>
+          <div className="mt-12">
+            <MagneticLink href="/studio/new" variant="signal">
+              <span className="rec-blink size-2 rounded-full bg-white" /> Create Your First Clip
             </MagneticLink>
           </div>
         </Reveal>
-      </div>
+      </Wrap>
     </section>
   );
 }

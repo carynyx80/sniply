@@ -189,7 +189,7 @@ function LaunchPanel({ draft }: { draft: TokenDraft }) {
     <Card className="space-y-5 p-6">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <span className="bg-brand grid size-12 place-items-center rounded-2xl text-lg font-bold">{draft.symbol[0]}</span>
+          <span className="bg-brand grid size-12 place-items-center rounded-[10px] text-lg font-bold">{draft.symbol[0]}</span>
           <div>
             <p className="font-medium">{draft.name}</p>
             <p className="font-mono text-sm text-muted">${draft.symbol} · BEP-20</p>
@@ -200,7 +200,7 @@ function LaunchPanel({ draft }: { draft: TokenDraft }) {
       <p className="text-sm leading-relaxed text-muted">{draft.description}</p>
 
       {!enabled ? (
-        <div className="rounded-2xl border border-warn/30 bg-warn/[0.06] p-5">
+        <div className="rounded-[10px] border border-warn/30 bg-warn/[0.06] p-5">
           <p className="flex items-center gap-2 text-sm font-medium text-warn"><Lock className="size-4" /> Launching is not available yet</p>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Your draft is saved. On-chain launch is turned off until an operator configures a verified launch contract on BNB Chain. We haven’t found official integration docs for an existing BNB launchpad, so Sniply ships an auditable factory contract (<span className="font-mono text-xs">contracts/SniplyTokenFactory.sol</span>). It needs a security review and a testnet deployment before it can be switched on.
@@ -208,7 +208,7 @@ function LaunchPanel({ draft }: { draft: TokenDraft }) {
           <p className="mt-3 text-xs text-dim">Nothing has been submitted to any chain. No fees have been charged.</p>
         </div>
       ) : launch ? (
-        <div className="rounded-2xl border border-ok/30 bg-ok/[0.06] p-5">
+        <div className="rounded-[10px] border border-ok/30 bg-ok/[0.06] p-5">
           <p className="flex items-center gap-2 font-medium text-ok"><CheckCircle2 className="size-4" /> Confirmed on {activeChain.name}</p>
           <p className="mt-2 break-all font-mono text-xs text-muted">{launch.tokenAddress}</p>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -217,7 +217,7 @@ function LaunchPanel({ draft }: { draft: TokenDraft }) {
           </div>
         </div>
       ) : attempt ? (
-        <div className="rounded-2xl border border-line bg-ink p-5">
+        <div className="rounded-[10px] border border-line bg-ink p-5">
           <p className="flex items-center gap-2 text-sm font-medium">
             {attempt.status === "reverted" ? <AlertTriangle className="size-4 text-bad" /> : <Loader2 className="size-4 animate-spin text-pink" />}
             {attempt.status === "pending" && "Waiting for on-chain confirmation…"}
@@ -231,7 +231,7 @@ function LaunchPanel({ draft }: { draft: TokenDraft }) {
         </div>
       ) : (
         <>
-          <dl className="divide-y divide-line rounded-2xl border border-line text-sm">
+          <dl className="divide-y divide-line rounded-[10px] border border-line text-sm">
             <Row k="Network" v={activeChain.name} />
             <Row k="Launch contract" v={<span className="font-mono text-xs">{LAUNCHPAD.factoryAddress}</span>} />
             <Row k="Creation fee" v={fee.data !== undefined ? `${formatEther(fee.data)} ${activeChain.nativeCurrency.symbol}` : "Reading…"} />

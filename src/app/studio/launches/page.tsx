@@ -20,8 +20,8 @@ export default function Launches() {
         ) : (
           <div className="space-y-2">
             {q.data.map((d) => (
-              <Link key={d.id} href={`/studio/launch/${d.clipId}`} className="flex items-center gap-4 rounded-2xl border border-line bg-surface p-4 hover:border-line-strong">
-                <span className="bg-brand grid size-10 place-items-center rounded-xl text-sm font-bold">{d.symbol[0]}</span>
+              <Link key={d.id} href={`/studio/launch/${d.clipId}`} className="flex items-center gap-4 rounded-[10px] border border-line bg-surface p-4 hover:border-line-strong">
+                <span className="bg-brand grid size-10 place-items-center rounded-[8px] text-sm font-bold">{d.symbol[0]}</span>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium">{d.name} <span className="font-mono text-muted">${d.symbol}</span></p>
                   <p className="text-xs text-dim">{timeAgo(d.createdAt)}</p>

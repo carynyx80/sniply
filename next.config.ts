@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  // Separate output dir for local prod builds/E2E so they don't clobber `next dev`.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   poweredByHeader: false,
   webpack: (config) => {
     // wagmi/connectors re-exports optional connectors whose SDKs we don't ship.

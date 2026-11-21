@@ -63,12 +63,12 @@ export default function StudioOverview() {
             {jobs.isLoading ? (
               <Skeleton className="h-16" />
             ) : (jobs.data ?? []).length === 0 ? (
-              <p className="rounded-xl border border-dashed border-line-strong px-4 py-8 text-center text-sm text-muted">
+              <p className="rounded-[8px] border border-dashed border-line-strong px-4 py-8 text-center text-sm text-muted">
                 No jobs yet. Upload footage you own and your agent will rank its best moments.
               </p>
             ) : (
               jobs.data!.slice(0, 5).map((j) => (
-                <Link key={j.id} href={`/studio/new?job=${j.id}`} className="flex items-center gap-4 rounded-xl border border-line bg-ink px-4 py-3 hover:border-line-strong">
+                <Link key={j.id} href={`/studio/new?job=${j.id}`} className="flex items-center gap-4 rounded-[8px] border border-line bg-ink px-4 py-3 hover:border-line-strong">
                   <Workflow className="size-4 text-muted" />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between text-[13px]">
@@ -122,7 +122,7 @@ export default function StudioOverview() {
         ) : (
           <div className="grid gap-3 md:grid-cols-3">
             {agents.data!.map((a) => (
-              <Link key={a.id} href={`/studio/agents?id=${a.id}`} className="flex items-center gap-3 rounded-2xl border border-line bg-surface p-4 hover:border-line-strong">
+              <Link key={a.id} href={`/studio/agents?id=${a.id}`} className="flex items-center gap-3 rounded-[10px] border border-line bg-surface p-4 hover:border-line-strong">
                 <AgentAvatar hue={a.avatarHue} verified={a.identity.verified} className="size-10" />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium">{a.name}</p>
@@ -135,11 +135,11 @@ export default function StudioOverview() {
       </div>
 
       <div className="mt-6 grid gap-3 md:grid-cols-2">
-        <Link href="/studio/launches" className="group flex items-center justify-between rounded-2xl border border-line bg-surface p-5 hover:border-line-strong">
+        <Link href="/studio/launches" className="group flex items-center justify-between rounded-[10px] border border-line bg-surface p-5 hover:border-line-strong">
           <span className="flex items-center gap-3 text-sm"><Rocket className="size-4 text-pink" /> Token launches</span>
           <ArrowRight className="size-4 text-dim transition group-hover:translate-x-1 group-hover:text-white" />
         </Link>
-        <Link href="/studio/clips?tab=draft" className="group flex items-center justify-between rounded-2xl border border-line bg-surface p-5 hover:border-line-strong">
+        <Link href="/studio/clips?tab=draft" className="group flex items-center justify-between rounded-[10px] border border-line bg-surface p-5 hover:border-line-strong">
           <span className="flex items-center gap-3 text-sm"><Clapperboard className="size-4 text-[#7e9bff]" /> Drafts awaiting review</span>
           <ArrowRight className="size-4 text-dim transition group-hover:translate-x-1 group-hover:text-white" />
         </Link>

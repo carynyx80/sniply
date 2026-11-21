@@ -1,5 +1,19 @@
 # Deployment
 
+## Live topology
+```
+Browser ──► Vercel (sniply-carynyx1.vercel.app)  — pages, static assets
+              │  /api/*  (next.config.ts rewrite, BACKEND_URL)
+              ▼
+            Railway (sniply-api-production-1501f285.up.railway.app)
+              — Next.js route handlers, volume mounted at /data (SNIPLY_DATA_DIR)
+```
+Both deploy automatically on every push to `main` of github.com/carynyx80/sniply.
+- **Vercel env:** `BACKEND_URL`, `NEXT_PUBLIC_SNIPLY_NETWORK`, `NEXT_PUBLIC_LAUNCHPAD`.
+- **Railway env:** `PORT=8080`, `SESSION_SECRET`, `SNIPLY_DATA_DIR=/data`, `ALLOWED_AUTH_HOSTS` (Vercel hostnames, for sign-in message checks), `ADMIN_WALLETS`, `NEXT_PUBLIC_*`.
+- Railway runs a single replica. The local JSON store isn't safe across replicas, so move to Supabase before scaling out.
+- Uploads pass through the Vercel proxy, which caps request bodies at roughly 4.5 MB. For larger videos, add direct-to-storage uploads (see step 3 below).
+
 1. **Supabase:** create a project, run `supabase/migrations/0001_init.sql`, and confirm the private bucket `sniply-media` exists.
 2. **Vercel:** import the repo. Install command: `npm install --legacy-peer-deps`. Set env vars from `.env.example`. At minimum: `SESSION_SECRET`, `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `ADMIN_WALLETS`, `NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID`, `BSC_RPC_URL`, `BSC_TESTNET_RPC_URL`.
 3. **Uploads at scale:** Vercel functions cap request bodies (~4.5 MB). For real video sizes, switch the client to `signedUploadUrl()` (in `src/server/storage.ts`) and upload directly to Supabase Storage, or use Mux/Cloudflare Stream direct uploads.

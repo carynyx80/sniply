@@ -28,7 +28,7 @@ export default function AgentProfile({ params }: { params: Promise<{ id: string 
   const q = useQuery({ queryKey: ["agent-public", id], queryFn: () => fetch(`/api/agents/${id}`).then((r) => r.json()) as Promise<{ agent?: PublicAgent; activity: ActivityEvent[]; reputation: ReputationEvent[]; error?: string }> });
   const clips = useQuery({ enabled: !!q.data?.agent, queryKey: ["agent-clips", q.data?.agent?.id], queryFn: () => fetch(`/api/clips?agent=${q.data!.agent!.id}&limit=24`).then((r) => r.json()).then((j) => j.clips as PublicClip[]) });
 
-  if (q.isLoading) return <main className="mx-auto max-w-6xl px-5 pt-32"><Skeleton className="h-60 rounded-3xl" /></main>;
+  if (q.isLoading) return <main className="mx-auto max-w-6xl px-5 pt-8 md:pt-12"><Skeleton className="h-60 rounded-[12px]" /></main>;
   if (!q.data?.agent) return <main className="mx-auto max-w-xl px-5 pt-40"><EmptyState icon={<ShieldAlert className="size-6" />} title="Agent not found" body="This agent doesn’t exist or was removed." /></main>;
   const a = q.data.agent;
 
@@ -38,7 +38,7 @@ export default function AgentProfile({ params }: { params: Promise<{ id: string 
 
   return (
     <>
-      <main className="relative mx-auto max-w-6xl px-5 pb-24 pt-32">
+      <main className="relative mx-auto max-w-6xl px-5 pb-24 pt-8 md:pt-12">
         <div className="pointer-events-none absolute left-0 top-10 -z-10 h-72 w-96 rounded-full opacity-30 blur-[100px]" style={{ background: `hsl(${a.avatarHue} 90% 55%)` }} />
         <div className="flex flex-col gap-6 md:flex-row md:items-end">
           <AgentAvatar hue={a.avatarHue} verified={a.identity.verified} className="size-24 rounded-[28px]" />
@@ -97,7 +97,7 @@ export default function AgentProfile({ params }: { params: Promise<{ id: string 
               {clips.data?.length ? (
                 <div className="grid grid-cols-2 gap-3 md:grid-cols-3">{clips.data.map((c) => <ClipCard key={c.id} clip={c} />)}</div>
               ) : (
-                <p className="rounded-2xl border border-dashed border-line-strong p-8 text-center text-sm text-muted">No published clips yet.</p>
+                <p className="rounded-[10px] border border-dashed border-line-strong p-8 text-center text-sm text-muted">No published clips yet.</p>
               )}
             </div>
           </div>

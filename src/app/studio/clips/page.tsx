@@ -44,8 +44,8 @@ function Clips() {
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {list.map((c) => (
-              <div key={c.id} className="flex gap-4 rounded-2xl border border-line bg-surface p-3">
-                <div className="relative aspect-[9/16] w-24 shrink-0 overflow-hidden rounded-xl bg-ink">
+              <div key={c.id} className="flex gap-4 rounded-[10px] border border-line bg-surface p-3">
+                <div className="relative aspect-[9/16] w-24 shrink-0 overflow-hidden rounded-[8px] bg-ink">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   {c.thumbnailUrl && <img src={c.thumbnailUrl} alt="" className="size-full object-cover" />}
                 </div>

@@ -80,16 +80,16 @@ export default function MarketPage({ params }: { params: Promise<{ address: stri
 
   return (
     <>
-      <main className="mx-auto max-w-6xl px-5 pb-24 pt-28">
+      <main className="mx-auto max-w-6xl px-5 pb-24 pt-8 md:pt-12">
         {markets.isFetched && !m && (
-          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-warn/30 bg-warn/[0.06] p-4 text-sm">
+          <div className="mb-6 flex items-start gap-3 rounded-[10px] border border-warn/30 bg-warn/[0.06] p-4 text-sm">
             <AlertTriangle className="mt-0.5 size-4 shrink-0 text-warn" />
             <p className="text-muted"><span className="text-warn">Not a Sniply-verified launch.</span> We have no confirmed launch record for this contract, so trading is disabled here. Check the address carefully.</p>
           </div>
         )}
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="flex items-center gap-4">
-            <span className="bg-brand grid size-14 place-items-center rounded-2xl text-xl font-bold">{(symbol ?? "?")[0]}</span>
+            <span className="bg-brand grid size-14 place-items-center rounded-[10px] text-xl font-bold">{(symbol ?? "?")[0]}</span>
             <div>
               <h1 className="text-3xl font-semibold tracking-[-0.04em]">{name ?? (meta.isLoading ? "…" : "Unknown token")}</h1>
               <div className="mt-1 flex items-center gap-2 text-sm text-muted">
@@ -213,7 +213,7 @@ function PriceChart({ points, loading, hasPool }: { points: number[]; loading: b
             <polyline points={d} fill="none" stroke="url(#pl)" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
           </svg>
         ) : (
-          <div className="absolute inset-0 grid place-items-center rounded-xl border border-dashed border-line-strong text-center text-xs text-dim">{hasPool ? "Not enough recent swaps to chart" : "No liquidity pool yet"}</div>
+          <div className="absolute inset-0 grid place-items-center rounded-[8px] border border-dashed border-line-strong text-center text-xs text-dim">{hasPool ? "Not enough recent swaps to chart" : "No liquidity pool yet"}</div>
         )}
       </div>
     </div>
@@ -289,7 +289,7 @@ function TradePanel({ token, symbol, decimals, hasPool, enabled, reserveToken, r
         <button onClick={() => setShowSlip((v) => !v)} className="flex items-center gap-1 text-xs text-muted hover:text-white"><Settings2 className="size-3.5" /> {(slip / 100).toFixed(1)}%</button>
       </div>
       {showSlip && (
-        <div className="mt-3 flex items-center gap-2 rounded-xl border border-line bg-ink p-2">
+        <div className="mt-3 flex items-center gap-2 rounded-[8px] border border-line bg-ink p-2">
           {[50, 100, 300].map((b) => <button key={b} onClick={() => setSlip(b)} className={cn("rounded-lg px-2.5 py-1 text-xs", slip === b ? "bg-white/10" : "text-muted")}>{b / 100}%</button>)}
           <input type="number" min={0.1} max={MAX_SLIPPAGE_BPS / 100} step={0.1} value={slip / 100} onChange={(e) => setSlip(Math.min(MAX_SLIPPAGE_BPS, Math.max(10, Math.round(Number(e.target.value) * 100))))} className="w-16 bg-transparent text-right text-xs outline-none" />
           <span className="text-xs text-dim">% max slippage</span>
@@ -300,11 +300,11 @@ function TradePanel({ token, symbol, decimals, hasPool, enabled, reserveToken, r
           <span>You pay</span>
           <span>Balance: {side === "buy" ? (native.data ? Number(formatEther(native.data.value)).toFixed(4) : "—") : tokBal.data !== undefined && decimals !== undefined ? fmtNum(Number(formatUnits(tokBal.data as bigint, decimals))) : "—"}</span>
         </div>
-        <div className="mt-1.5 flex items-center gap-2 rounded-2xl border border-line bg-ink px-4 py-3 focus-within:border-pink/50">
+        <div className="mt-1.5 flex items-center gap-2 rounded-[10px] border border-line bg-ink px-4 py-3 focus-within:border-pink/50">
           <input inputMode="decimal" className="w-full bg-transparent text-2xl font-medium tabular-nums outline-none placeholder:text-dim" placeholder="0.0" value={amount} onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))} />
           <span className="shrink-0 font-mono text-sm text-muted">{side === "buy" ? activeChain.nativeCurrency.symbol : symbol}</span>
         </div>
-        <div className="mt-3 space-y-1.5 rounded-xl bg-white/[0.02] p-3 text-xs">
+        <div className="mt-3 space-y-1.5 rounded-[8px] bg-white/[0.02] p-3 text-xs">
           <div className="flex justify-between"><span className="text-dim">Expected out (quote)</span><span className="tabular-nums">{out !== undefined ? (side === "buy" && decimals !== undefined ? `${fmtNum(Number(formatUnits(out, decimals)))} ${symbol}` : `${Number(formatEther(out)).toFixed(6)} ${activeChain.nativeCurrency.symbol}`) : quote.isLoading ? "…" : "—"}</span></div>
           <div className="flex justify-between"><span className="text-dim">Minimum received</span><span className="tabular-nums">{out !== undefined ? (side === "buy" && decimals !== undefined ? fmtNum(Number(formatUnits(minOut(out, slip), decimals))) : Number(formatEther(minOut(out, slip))).toFixed(6)) : "—"}</span></div>
           <div className="flex justify-between"><span className="text-dim">Price impact</span><span className={cn(impact !== undefined && impact > 0.05 && "text-warn")}>{impact !== undefined ? `${(impact * 100).toFixed(2)}%` : "—"}</span></div>

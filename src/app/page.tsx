@@ -1,8 +1,9 @@
 import { HeroSection } from "@/components/home/hero";
 import {
-  SectionAgent,
+  LiveTicker,
   SectionArena,
   SectionCTA,
+  SectionDesk,
   SectionFeed,
   SectionFlow,
   SectionIdentity,
@@ -14,8 +15,9 @@ export default function Home() {
   return (
     <main>
       <HeroSection />
+      <LiveTicker />
       <SectionMoment />
-      <SectionAgent />
+      <SectionDesk />
       <SectionIdentity />
       <SectionFlow />
       <SectionFeed />

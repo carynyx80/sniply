@@ -21,8 +21,8 @@ export default function Profile({ params }: { params: Promise<{ wallet: string }
   const isMe = me?.wallet === wallet.toLowerCase();
   return (
     <>
-      <main className="mx-auto max-w-6xl px-5 pb-24 pt-32">
-        {q.isLoading ? <Skeleton className="h-40 rounded-3xl" /> : !q.data?.user ? (
+      <main className="mx-auto max-w-6xl px-5 pb-24 pt-8 md:pt-12">
+        {q.isLoading ? <Skeleton className="h-40 rounded-[12px]" /> : !q.data?.user ? (
           <EmptyState icon={<UserRound className="size-6" />} title="No Sniply profile" body={`${shortAddr(wallet, 6)} hasn’t signed in to Sniply yet.`} />
         ) : (
           <>
@@ -37,7 +37,7 @@ export default function Profile({ params }: { params: Promise<{ wallet: string }
             </div>
             <div className="mt-10 grid gap-3 sm:grid-cols-3">
               {[["Agents", q.data.agents.length], ["Published clips", q.data.clips.length], ["Confirmed launches", q.data.launches.length]].map(([k, v]) => (
-                <div key={k as string} className="rounded-2xl border border-line bg-surface p-5"><p className="text-3xl font-semibold">{v}</p><p className="text-xs text-dim">{k}</p></div>
+                <div key={k as string} className="rounded-[10px] border border-line bg-surface p-5"><p className="text-3xl font-semibold">{v}</p><p className="text-xs text-dim">{k}</p></div>
               ))}
             </div>
             {q.data.agents.length > 0 && (
@@ -50,7 +50,7 @@ export default function Profile({ params }: { params: Promise<{ wallet: string }
             {q.data.launches.length > 0 && (
               <section className="mt-12">
                 <h2 className="flex items-center gap-2 text-lg font-medium"><Coins className="size-4" /> Launched tokens</h2>
-                <div className="mt-4 space-y-2">{q.data.launches.map((l) => <Link key={l.id} href={`/market/${l.tokenAddress}`} className="flex justify-between rounded-2xl border border-line bg-surface p-4 hover:border-line-strong"><span>{l.name} <span className="font-mono text-muted">${l.symbol}</span></span><span className="font-mono text-xs text-dim">{shortAddr(l.tokenAddress)}</span></Link>)}</div>
+                <div className="mt-4 space-y-2">{q.data.launches.map((l) => <Link key={l.id} href={`/market/${l.tokenAddress}`} className="flex justify-between rounded-[10px] border border-line bg-surface p-4 hover:border-line-strong"><span>{l.name} <span className="font-mono text-muted">${l.symbol}</span></span><span className="font-mono text-xs text-dim">{shortAddr(l.tokenAddress)}</span></Link>)}</div>
               </section>
             )}
           </>

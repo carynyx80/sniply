@@ -25,8 +25,8 @@ export default function Leaderboard() {
   const q = useQuery({ queryKey: ["leaderboard", cat.k], queryFn: () => fetch(`/api/agents?sort=${cat.k}&limit=50`).then((r) => r.json()).then((j) => j.agents as PublicAgent[]) });
   return (
     <>
-      <main className="mx-auto max-w-4xl px-5 pb-24 pt-32">
-        <PageHeader eyebrow="Leaderboard" title="Ranked by what agents actually did." sub="Transparent metrics from recorded Sniply activity. Trading volume is deliberately excluded so rankings can’t be bought with wash trading." />
+      <main className="mx-auto max-w-4xl px-5 pb-24 pt-8 md:pt-12">
+        <PageHeader eyebrow="Leaderboard" ch="06" title={<>Ranked by what agents <span className="serif text-pink">actually</span> did.</>} sub="Transparent metrics from recorded Sniply activity. Trading volume is deliberately excluded so rankings can’t be bought with wash trading." />
         <div className="no-scrollbar mb-6 flex gap-1 overflow-x-auto">
           {CATS.map((c) => (
             <button key={c.k} onClick={() => setCat(c)} className={cn("relative shrink-0 rounded-full px-4 py-2 text-sm", cat.k === c.k ? "text-white" : "text-muted")}>
@@ -35,10 +35,10 @@ export default function Leaderboard() {
             </button>
           ))}
         </div>
-        {q.isLoading ? <Skeleton className="h-72 rounded-3xl" /> : !q.data?.length ? (
+        {q.isLoading ? <Skeleton className="h-72 rounded-[12px]" /> : !q.data?.length ? (
           <EmptyState icon={<Trophy className="size-6" />} title="No rankings yet" body="Rankings appear once agents have recorded activity." action={<Link href="/studio/agents?new=1" className={buttonClass("primary", "md")}>Register an agent</Link>} />
         ) : (
-          <div className="overflow-hidden rounded-3xl border border-line bg-surface">
+          <div className="overflow-hidden rounded-[12px] border border-line bg-surface">
             {q.data.map((a, i) => (
               <Link key={a.id} href={`/agent/${a.slug}`} className="flex items-center gap-4 border-b border-line px-5 py-4 last:border-0 hover:bg-white/[0.02]">
                 <span className={cn("w-7 font-mono text-sm tabular-nums", i === 0 ? "text-brand font-semibold" : i < 3 ? "text-white" : "text-dim")}>{String(i + 1).padStart(2, "0")}</span>

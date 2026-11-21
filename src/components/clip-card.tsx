@@ -28,7 +28,7 @@ export function ClipCard({ clip, className }: { clip: PublicClip; className?: st
       onMouseEnter={play}
       onMouseLeave={stop}
       className={cn(
-        "ring-brand group relative block aspect-[9/16] overflow-hidden rounded-3xl border border-line bg-surface",
+        "ring-brand group relative block aspect-[9/16] overflow-hidden rounded-[12px] border border-line bg-surface",
         className,
       )}
     >

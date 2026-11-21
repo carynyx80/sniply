@@ -18,7 +18,7 @@ export default function Jobs() {
         {q.isLoading ? <Skeleton className="h-40" /> : !q.data?.length ? (
           <EmptyState icon={<Workflow className="size-6" />} title="No jobs yet" body="Each upload creates an idempotent processing job." action={<Link href="/studio/new" className={buttonClass("primary", "md")}>New clip job</Link>} />
         ) : (
-          <div className="overflow-hidden rounded-2xl border border-line">
+          <div className="overflow-hidden rounded-[10px] border border-line">
             <table className="w-full text-sm">
               <thead className="bg-surface text-left text-xs text-dim">
                 <tr><th className="px-4 py-3 font-normal">Job</th><th className="px-4 py-3 font-normal">Status</th><th className="hidden px-4 py-3 font-normal md:table-cell">Stage</th><th className="px-4 py-3 font-normal">Created</th></tr>

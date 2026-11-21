@@ -15,9 +15,9 @@ export function AuthGate({ children }: { children: React.ReactNode }) {
   if (loading) return <Skeleton className="h-64" />;
   if (user) return <>{children}</>;
   return (
-    <div className="relative mx-auto mt-10 max-w-md overflow-hidden rounded-3xl border border-line bg-surface p-8 text-center">
+    <div className="relative mx-auto mt-10 max-w-md overflow-hidden rounded-[12px] border border-line bg-surface p-8 text-center">
       <div className="bg-brand absolute -top-24 left-1/2 h-40 w-72 -translate-x-1/2 rounded-full opacity-25 blur-3xl" />
-      <div className="relative mx-auto grid size-14 place-items-center rounded-2xl border border-line bg-ink">
+      <div className="relative mx-auto grid size-14 place-items-center rounded-[10px] border border-line bg-ink">
         <ShieldCheck className="size-6 text-pink" />
       </div>
       <h2 className="relative mt-5 text-xl font-semibold tracking-tight">Sign in to open the Studio</h2>

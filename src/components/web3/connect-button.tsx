@@ -62,7 +62,7 @@ export function ConnectButton({ className }: { className?: string }) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute right-0 top-11 z-50 w-72 overflow-hidden rounded-2xl border border-line-strong bg-surface/95 p-2 shadow-2xl shadow-black/60 backdrop-blur-xl"
+            className="absolute right-0 top-11 z-50 w-72 overflow-hidden rounded-[10px] border border-line-strong bg-surface/95 p-1.5 shadow-2xl shadow-black/60 backdrop-blur-xl"
           >
             {!isConnected ? (
               <div className="space-y-1">
@@ -72,9 +72,9 @@ export function ConnectButton({ className }: { className?: string }) {
                     key={c.uid}
                     disabled={isPending}
                     onClick={() => connect({ connector: c, chainId: activeChain.id })}
-                    className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm hover:bg-white/5"
+                    className="flex w-full items-center gap-3 rounded-[7px] px-3 py-2.5 text-left text-sm hover:bg-white/5"
                   >
-                    <span className="grid size-8 place-items-center rounded-lg bg-white/5">
+                    <span className="grid size-8 place-items-center rounded-[6px] bg-white/5">
                       <Wallet className="size-4" />
                     </span>
                     <span>
@@ -98,7 +98,7 @@ export function ConnectButton({ className }: { className?: string }) {
                 {wrongChain && (
                   <button
                     onClick={() => switchChain({ chainId: activeChain.id })}
-                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-warn hover:bg-white/5"
+                    className="flex w-full items-center gap-2 rounded-[7px] px-3 py-2.5 text-sm text-warn hover:bg-white/5"
                   >
                     <AlertTriangle className="size-4" /> Switch to {activeChain.name}
                   </button>
@@ -107,7 +107,7 @@ export function ConnectButton({ className }: { className?: string }) {
                   <button
                     onClick={signIn}
                     disabled={signing}
-                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm hover:bg-white/5"
+                    className="flex w-full items-center gap-2 rounded-[7px] px-3 py-2.5 text-sm hover:bg-white/5"
                   >
                     <ShieldCheck className="size-4 text-pink" /> {signing ? "Check your wallet…" : "Sign in with wallet"}
                   </button>
@@ -117,7 +117,7 @@ export function ConnectButton({ className }: { className?: string }) {
                   <Link
                     href={`/profile/${address}`}
                     onClick={() => setOpen(false)}
-                    className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm hover:bg-white/5"
+                    className="flex w-full items-center gap-2 rounded-[7px] px-3 py-2.5 text-sm hover:bg-white/5"
                   >
                     <User className="size-4" /> My profile
                   </Link>
@@ -128,7 +128,7 @@ export function ConnectButton({ className }: { className?: string }) {
                     disconnect();
                     setOpen(false);
                   }}
-                  className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-sm text-muted hover:bg-white/5 hover:text-white"
+                  className="flex w-full items-center gap-2 rounded-[7px] px-3 py-2.5 text-sm text-muted hover:bg-white/5 hover:text-white"
                 >
                   <LogOut className="size-4" /> Disconnect
                 </button>

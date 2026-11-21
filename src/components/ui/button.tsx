@@ -5,24 +5,29 @@ import { motion, useMotionValue, useSpring } from "motion/react";
 import { forwardRef, useRef } from "react";
 import { cn } from "@/lib/utils";
 
-type Variant = "primary" | "secondary" | "ghost" | "danger";
+type Variant = "primary" | "signal" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "relative inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-full font-medium tracking-[-0.01em] transition-[background,color,box-shadow,opacity] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink/60 focus-visible:ring-offset-2 focus-visible:ring-offset-ink disabled:cursor-not-allowed disabled:opacity-40";
+  "group/btn relative inline-flex select-none items-center justify-center gap-2 whitespace-nowrap rounded-[8px] font-medium tracking-[-0.01em] transition-[background,color,box-shadow,transform,opacity] duration-200 active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 focus-visible:ring-offset-ink disabled:pointer-events-none disabled:opacity-40";
 
 const variants: Record<Variant, string> = {
+  // key-cap: white face with an inset bottom edge
   primary:
-    "bg-white text-ink hover:shadow-[0_0_0_4px_rgba(255,43,190,0.18),0_10px_40px_-10px_rgba(36,87,255,0.6)]",
-  secondary: "bg-white/[0.06] text-white ring-1 ring-inset ring-white/10 hover:bg-white/[0.1]",
-  ghost: "text-muted hover:text-white hover:bg-white/[0.05]",
-  danger: "bg-bad/15 text-bad ring-1 ring-inset ring-bad/30 hover:bg-bad/25",
+    "bg-white text-ink shadow-[inset_0_-2px_0_rgba(0,0,0,0.18),0_1px_0_rgba(255,255,255,0.4)] hover:bg-[#f1f1f6]",
+  // live signal: the pink "REC" button
+  signal:
+    "bg-pink text-white shadow-[inset_0_-2px_0_rgba(0,0,0,0.25),0_0_0_1px_rgba(255,43,190,0.6),0_8px_30px_-8px_rgba(255,43,190,0.7)] hover:bg-[#ff45c8]",
+  secondary:
+    "bg-surface-2 text-white shadow-[inset_0_0_0_1px_rgba(255,255,255,0.1),inset_0_-2px_0_rgba(0,0,0,0.3)] hover:bg-surface-3",
+  ghost: "text-muted hover:bg-white/[0.05] hover:text-white",
+  danger: "bg-bad/12 text-bad shadow-[inset_0_0_0_1px_rgba(255,84,112,0.35)] hover:bg-bad/20",
 };
 
 const sizes: Record<Size, string> = {
-  sm: "h-8 px-3.5 text-[13px]",
-  md: "h-10 px-5 text-sm",
-  lg: "h-13 px-7 text-[15px]",
+  sm: "h-8 px-3 text-[12.5px]",
+  md: "h-10 px-4 text-[13.5px]",
+  lg: "h-12 px-6 text-[14.5px]",
 };
 
 export const buttonClass = (variant: Variant = "primary", size: Size = "md", className?: string) =>
@@ -54,8 +59,8 @@ export function MagneticLink({
   const ref = useRef<HTMLDivElement>(null);
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  const sx = useSpring(x, { stiffness: 250, damping: 18 });
-  const sy = useSpring(y, { stiffness: 250, damping: 18 });
+  const sx = useSpring(x, { stiffness: 300, damping: 20 });
+  const sy = useSpring(y, { stiffness: 300, damping: 20 });
   return (
     <motion.div
       ref={ref}
@@ -63,8 +68,8 @@ export function MagneticLink({
       onPointerMove={(e) => {
         if (e.pointerType !== "mouse" || !ref.current) return;
         const r = ref.current.getBoundingClientRect();
-        x.set((e.clientX - (r.left + r.width / 2)) * 0.18);
-        y.set((e.clientY - (r.top + r.height / 2)) * 0.25);
+        x.set((e.clientX - (r.left + r.width / 2)) * 0.15);
+        y.set((e.clientY - (r.top + r.height / 2)) * 0.2);
       }}
       onPointerLeave={() => {
         x.set(0);

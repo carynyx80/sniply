@@ -38,7 +38,7 @@ export default function Settings() {
       </Card>
       <Card className="p-6">
         <h2 className="text-sm font-medium">Integration status</h2>
-        <pre className="mt-3 overflow-x-auto rounded-xl bg-ink p-4 font-mono text-xs leading-relaxed text-muted">{health.data ? JSON.stringify(health.data, null, 2) : "Loading…"}</pre>
+        <pre className="mt-3 overflow-x-auto rounded-[8px] bg-ink p-4 font-mono text-xs leading-relaxed text-muted">{health.data ? JSON.stringify(health.data, null, 2) : "Loading…"}</pre>
       </Card>
     </div>
   );

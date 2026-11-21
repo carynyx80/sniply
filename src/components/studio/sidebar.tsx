@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { motion } from "motion/react";
-import { Bot, Clapperboard, Cog, FileVideo, Home, LayoutGrid, Rocket, Upload, Workflow } from "lucide-react";
-import { Logo } from "@/components/logo";
-import { ConnectButton } from "@/components/web3/connect-button";
+import { Bot, Clapperboard, Cog, FileText, FileVideo, LayoutGrid, Rocket, Workflow } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const items = [
@@ -13,61 +12,56 @@ const items = [
   { href: "/studio/agents", label: "My Agents", icon: Bot },
   { href: "/studio/sources", label: "Video Sources", icon: FileVideo },
   { href: "/studio/jobs", label: "Clip Jobs", icon: Workflow },
-  { href: "/studio/clips?tab=draft", label: "Drafts", icon: Clapperboard, match: "draft" },
-  { href: "/studio/clips?tab=published", label: "Published Clips", icon: Clapperboard, match: "published" },
+  { href: "/studio/clips?tab=draft", label: "Drafts", icon: FileText, tab: "draft" },
+  { href: "/studio/clips?tab=published", label: "Published", icon: Clapperboard, tab: "published" },
   { href: "/studio/launches", label: "Token Launches", icon: Rocket },
   { href: "/studio/settings", label: "Settings", icon: Cog },
 ];
 
 export function StudioSidebar() {
+  return (
+    <Suspense>
+      <Inner />
+    </Suspense>
+  );
+}
+
+function Inner() {
   const pathname = usePathname();
+  const tab = useSearchParams().get("tab") ?? "published";
   const isOn = (i: (typeof items)[number]) => {
     const base = i.href.split("?")[0];
     if (i.exact) return pathname === base;
-    if (i.match) return pathname.startsWith(base) && typeof window !== "undefined" && window.location.search.includes(i.match);
+    if (i.tab) return pathname === base && tab === i.tab;
     return pathname.startsWith(base);
   };
   return (
     <>
-      {/* desktop */}
-      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col border-r border-line bg-ink px-3 py-5 lg:flex">
-        <Link href="/" className="px-3">
-          <Logo />
+      <aside className="sticky top-[var(--bar-h)] hidden h-[calc(100dvh-var(--bar-h))] w-60 shrink-0 flex-col border-r border-line bg-ink-2 px-3 py-5 lg:flex">
+        <p className="px-2 font-mono text-[10px] uppercase tracking-[0.18em] text-dim">Agent Studio</p>
+        <Link href="/studio/new" className="mt-4 flex h-10 items-center justify-center gap-2 rounded-[8px] bg-pink text-[13px] font-medium shadow-[inset_0_-2px_0_rgba(0,0,0,0.25)] transition hover:bg-[#ff45c8]">
+          <span className="rec-blink size-1.5 rounded-full bg-white" /> New clip job
         </Link>
-        <Link
-          href="/studio/new"
-          className="bg-brand mx-1 mt-7 flex h-10 items-center justify-center gap-2 rounded-xl text-sm font-medium shadow-[0_10px_30px_-10px_rgba(255,43,190,0.6)]"
-        >
-          <Upload className="size-4" /> New clip job
-        </Link>
-        <nav className="mt-6 flex-1 space-y-0.5">
+        <nav className="mt-5 space-y-0.5">
           {items.map((i) => {
             const on = isOn(i);
             return (
-              <Link key={i.href} href={i.href} className={cn("relative flex items-center gap-3 rounded-xl px-3 py-2 text-[13.5px] transition", on ? "text-white" : "text-muted hover:text-white")}>
-                {on && <motion.span layoutId="studio-active" className="absolute inset-0 rounded-xl bg-white/[0.06]" transition={{ type: "spring", stiffness: 400, damping: 34 }} />}
-                <i.icon className="relative size-4" />
+              <Link key={i.href} href={i.href} className={cn("relative flex items-center gap-3 rounded-[7px] px-2.5 py-2 text-[13px] transition", on ? "text-white" : "text-muted hover:text-white")}>
+                {on && <motion.span layoutId="studio-active" className="absolute inset-0 rounded-[7px] bg-white/[0.06] ring-1 ring-inset ring-white/10" transition={{ type: "spring", stiffness: 420, damping: 34 }} />}
+                <i.icon className="relative size-4" strokeWidth={1.8} />
                 <span className="relative">{i.label}</span>
               </Link>
             );
           })}
         </nav>
-        <div className="space-y-2 px-1">
-          <Link href="/" className="flex items-center gap-2 rounded-xl px-2 py-2 text-xs text-dim hover:text-white">
-            <Home className="size-3.5" /> Back to Sniply
-          </Link>
-          <ConnectButton />
+        <div className="mt-auto rounded-[8px] border border-line p-3 text-[11px] leading-relaxed text-dim">
+          Agents never move funds. You sign every launch and every trade.
         </div>
       </aside>
-      {/* mobile top bar + scroller */}
-      <div className="sticky top-0 z-40 border-b border-line bg-ink/90 backdrop-blur-xl lg:hidden">
-        <div className="flex items-center justify-between px-4 py-3">
-          <Link href="/"><Logo /></Link>
-          <ConnectButton />
-        </div>
-        <div className="no-scrollbar flex gap-1 overflow-x-auto px-3 pb-2">
-          {[{ href: "/studio/new", label: "New job", icon: Upload }, ...items].map((i) => (
-            <Link key={i.href + i.label} href={i.href} className={cn("flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px]", pathname === i.href.split("?")[0] ? "bg-white/10 text-white" : "text-muted")}>
+      <div className="sticky top-[var(--bar-h)] z-30 border-b border-line bg-ink/90 backdrop-blur-xl lg:hidden">
+        <div className="no-scrollbar flex gap-1 overflow-x-auto px-3 py-2">
+          {items.map((i) => (
+            <Link key={i.href} href={i.href} className={cn("flex shrink-0 items-center gap-1.5 rounded-[6px] px-2.5 py-1.5 text-[12px]", isOn(i) ? "bg-white/10 text-white" : "text-muted")}>
               <i.icon className="size-3.5" /> {i.label}
             </Link>
           ))}

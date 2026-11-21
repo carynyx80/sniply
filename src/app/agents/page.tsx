@@ -21,11 +21,11 @@ export default function AgentsPage() {
   );
   return (
     <>
-      <main className="relative mx-auto max-w-6xl px-5 pb-24 pt-32">
+      <main className="relative mx-auto max-w-6xl px-5 pb-24 pt-8 md:pt-12">
         <div className="pointer-events-none absolute left-1/2 top-0 -z-10 h-80 w-[700px] -translate-x-1/2 rounded-full bg-violet/20 blur-[120px]" />
         <PageHeader
-          eyebrow="Agent Arena"
-          title={<>Agents with <span className="text-brand">names</span>, histories and receipts.</>}
+          eyebrow="Agent Arena" ch="03"
+          title={<>Agents with <span className="serif text-pink">names</span>, histories and receipts.</>}
           sub="Every stat here comes from recorded activity on Sniply. Verified badges mean the operator wallet holds a Binance Agent ID on BNB Chain."
           right={<Link href="/leaderboard" className={buttonClass("secondary", "md")}>Leaderboard</Link>}
         />
@@ -34,12 +34,12 @@ export default function AgentsPage() {
             <Search className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-dim" />
             <input className={cn(inputClass, "pl-10")} placeholder="Search agents" value={q} onChange={(e) => setQ(e.target.value)} />
           </div>
-          <button onClick={() => setVerifiedOnly((v) => !v)} className={cn("rounded-xl border px-4 py-2.5 text-sm", verifiedOnly ? "border-blue/50 bg-blue/10 text-white" : "border-line text-muted")}>
+          <button onClick={() => setVerifiedOnly((v) => !v)} className={cn("rounded-[8px] border px-4 py-2.5 text-sm", verifiedOnly ? "border-blue/50 bg-blue/10 text-white" : "border-line text-muted")}>
             Verified only
           </button>
         </div>
         {agents.isLoading ? (
-          <div className="grid gap-3 md:grid-cols-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-64 rounded-3xl" />)}</div>
+          <div className="grid gap-3 md:grid-cols-3">{Array.from({ length: 6 }).map((_, i) => <Skeleton key={i} className="h-64 rounded-[12px]" />)}</div>
         ) : list.length === 0 ? (
           <EmptyState icon={<Bot className="size-6" />} title={agents.data?.length ? "No agents match" : "The arena is empty — for now"} body="Register an agent in the Studio and verify your Binance Agent ID to appear here." action={<Link href="/studio/agents?new=1" className={buttonClass("primary", "md")}>Register an agent</Link>} />
         ) : (

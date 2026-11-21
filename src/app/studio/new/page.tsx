@@ -215,15 +215,15 @@ function NewJob() {
                 dropRef.current?.classList.remove("border-pink/60");
                 onFile(e.dataTransfer.files?.[0] ?? null);
               }}
-              className="group relative flex min-h-[340px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-3xl border-2 border-dashed border-line-strong bg-surface p-6 text-center transition-colors hover:border-pink/40"
+              className="group relative flex min-h-[340px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[12px] border-2 border-dashed border-line-strong bg-surface p-6 text-center transition-colors hover:border-pink/40"
             >
               <input type="file" accept="video/mp4,video/quicktime,video/webm,video/x-matroska" className="sr-only" onChange={(e) => onFile(e.target.files?.[0] ?? null)} />
               {localUrl ? (
-                <video src={localUrl} className="max-h-[300px] w-full rounded-2xl object-contain" controls muted playsInline />
+                <video src={localUrl} className="max-h-[300px] w-full rounded-[10px] object-contain" controls muted playsInline />
               ) : (
                 <>
                   <div className="dot-grid absolute inset-0 [mask-image:radial-gradient(circle,black,transparent_70%)]" />
-                  <div className="relative grid size-16 place-items-center rounded-2xl border border-line bg-ink transition group-hover:scale-105">
+                  <div className="relative grid size-16 place-items-center rounded-[10px] border border-line bg-ink transition group-hover:scale-105">
                     <Upload className="size-6" />
                   </div>
                   <p className="relative mt-5 text-lg font-medium">Drop a video or click to browse</p>
@@ -246,7 +246,7 @@ function NewJob() {
               {prefs && (
                 <div className="grid grid-cols-3 gap-2 text-center text-xs">
                   {[["Length", `${prefs.clipMinSec}–${prefs.clipMaxSec}s`], ["Picks", prefs.suggestions], ["Format", prefs.aspect]].map(([k, v]) => (
-                    <div key={k as string} className="rounded-xl border border-line bg-ink py-2.5">
+                    <div key={k as string} className="rounded-[8px] border border-line bg-ink py-2.5">
                       <p className="font-medium">{v}</p>
                       <p className="text-dim">{k}</p>
                     </div>
@@ -254,13 +254,13 @@ function NewJob() {
                 </div>
               )}
               {file && (
-                <div className="flex items-center gap-3 rounded-xl border border-line bg-ink p-3 text-sm">
+                <div className="flex items-center gap-3 rounded-[8px] border border-line bg-ink p-3 text-sm">
                   <FileVideo className="size-4 text-muted" />
                   <span className="min-w-0 flex-1 truncate">{file.name}</span>
                   <span className="text-xs text-dim">{(file.size / 1048576).toFixed(1)} MB</span>
                 </div>
               )}
-              <label className="flex cursor-pointer gap-3 rounded-xl border border-line bg-ink p-3.5 text-[13px] leading-relaxed text-muted">
+              <label className="flex cursor-pointer gap-3 rounded-[8px] border border-line bg-ink p-3.5 text-[13px] leading-relaxed text-muted">
                 <input type="checkbox" checked={rights} onChange={(e) => setRights(e.target.checked)} className="mt-0.5 size-4 accent-[#FF2BBE]" />
                 <span>
                   I own this video or have permission to clip and publish it. I won’t upload DRM-protected or unauthorized
@@ -287,7 +287,7 @@ function NewJob() {
             <Card className="relative overflow-hidden p-8 md:p-12">
               <div className="bg-brand-animated absolute inset-x-0 top-0 h-px" />
               <div className="flex flex-col items-center text-center">
-                <div className="relative grid size-20 place-items-center rounded-3xl border border-line bg-ink">
+                <div className="relative grid size-20 place-items-center rounded-[12px] border border-line bg-ink">
                   <Loader2 className="size-7 animate-spin text-pink" />
                 </div>
                 <p className="mt-6 text-xl font-medium tracking-tight">{stage}…</p>

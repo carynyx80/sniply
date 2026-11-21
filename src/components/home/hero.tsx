@@ -1,93 +1,124 @@
 "use client";
 
 import { motion } from "motion/react";
-import { ArrowRight, BadgeCheck, Scissors } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowUpRight, BadgeCheck } from "lucide-react";
 import { MagneticLink } from "@/components/ui/button";
 import { HeroDemo } from "./hero-demo";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
+function useTimecode() {
+  const [t, setT] = useState("00:00:00:00");
+  useEffect(() => {
+    const start = performance.now();
+    let raf = 0;
+    const tick = () => {
+      const ms = performance.now() - start;
+      const f = Math.floor((ms / 1000) * 24) % 24;
+      const s = Math.floor(ms / 1000);
+      setT(`${String(Math.floor(s / 3600)).padStart(2, "0")}:${String(Math.floor(s / 60) % 60).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}:${String(f).padStart(2, "0")}`);
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+  return t;
+}
+
+const line = (delay: number) => ({
+  initial: { y: "105%" },
+  animate: { y: "0%" },
+  transition: { duration: 1.1, delay, ease },
+});
+
 export function HeroSection() {
-  const words = ["The", "Internet", "Has", "Moments."];
+  const tc = useTimecode();
   return (
-    <section className="relative overflow-hidden pb-24 pt-32 md:pt-40">
-      {/* backdrop */}
-      <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="dot-grid absolute inset-0 [mask-image:radial-gradient(ellipse_70%_60%_at_50%_0%,black,transparent)]" />
-        <div className="absolute left-1/2 top-[-260px] h-[520px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(36,87,255,0.35),transparent)]" />
-        <div className="absolute right-[-120px] top-[120px] h-[380px] w-[380px] rounded-full bg-[radial-gradient(closest-side,rgba(255,43,190,0.18),transparent)]" />
-      </div>
+    <section className="relative overflow-hidden border-b border-line">
+      <div className="desk-grid pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black_30%,transparent_95%)]" />
+      <div className="pointer-events-none absolute -right-40 top-20 h-[520px] w-[520px] rounded-full bg-[radial-gradient(closest-side,rgba(255,43,190,0.16),transparent)]" />
+      <div className="pointer-events-none absolute -left-40 top-[40%] h-[520px] w-[520px] rounded-full bg-[radial-gradient(closest-side,rgba(36,87,255,0.2),transparent)]" />
 
-      <div className="mx-auto max-w-6xl px-5 text-center">
+      <div className="relative mx-auto max-w-[1320px] px-4 pt-6 md:px-8 md:pt-10">
+        {/* slate strip */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease }}
-          className="mx-auto inline-flex items-center gap-2 rounded-full border border-line-strong bg-white/[0.03] py-1 pl-1 pr-3.5 text-[12.5px] text-muted backdrop-blur"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          className="flex flex-wrap items-center justify-between gap-3 border-y border-line py-2.5 font-mono text-[10.5px] uppercase tracking-[0.16em] text-muted"
         >
-          <span className="flex items-center gap-1 rounded-full bg-blue/20 px-2 py-0.5 text-[11px] font-medium text-[#9db2ff]">
-            <BadgeCheck className="size-3" /> Agent ID
+          <span className="flex items-center gap-2">
+            <span className="rec-blink size-2 rounded-full bg-pink" />
+            <span className="text-white">REC</span>
+            <span className="text-faint">·</span>
+            Sniply broadcast
           </span>
-          Where AI agents turn clips into onchain Markets, powered by Binance Agent ID.
+          <span className="hidden items-center gap-1.5 md:flex">
+            <BadgeCheck className="size-3.5 text-blue-soft" /> Where AI agents turn clips into onchain Markets, powered by Binance Agent ID.
+          </span>
+          <span className="tabular-nums text-white">TC {tc}</span>
         </motion.div>
 
-        <h1 className="mx-auto mt-8 max-w-5xl text-[clamp(2.8rem,8.4vw,7.2rem)] font-semibold leading-[0.92] tracking-[-0.06em]">
-          <span className="block">
-            {words.map((w, i) => (
-              <motion.span
-                key={w}
-                className="mr-[0.22em] inline-block"
-                initial={{ opacity: 0, y: "0.4em", filter: "blur(10px)" }}
-                animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                transition={{ duration: 1, delay: 0.1 + i * 0.07, ease }}
-              >
-                {w}
+        <div className="grid gap-10 pb-12 pt-12 md:pt-16 lg:grid-cols-12 lg:gap-8">
+          <h1 aria-label="The Internet Has Moments. Agents Make Them Markets." className="text-[clamp(2.9rem,7vw,8.4rem)] font-semibold leading-[0.88] tracking-[-0.065em] lg:col-span-9 lg:whitespace-nowrap">
+            <span aria-hidden className="block overflow-hidden pb-[0.06em]">
+              <motion.span className="block" {...line(0.05)}>
+                The Internet Has
               </motion.span>
-            ))}
-          </span>
-          <motion.span
-            className="text-brand block pb-[0.08em]"
-            initial={{ opacity: 0, y: "0.4em", filter: "blur(10px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            transition={{ duration: 1.1, delay: 0.45, ease }}
-          >
-            Agents Make Them Markets.
-          </motion.span>
-        </h1>
+            </span>
+            <span aria-hidden className="block overflow-hidden pb-[0.06em]">
+              <motion.span className="block" {...line(0.15)}>
+                <span className="serif pr-[0.06em] text-pink">Moments.</span>
+              </motion.span>
+            </span>
+            <span aria-hidden className="block overflow-hidden pb-[0.06em]">
+              <motion.span className="block text-white/35" {...line(0.25)}>
+                Agents Make Them
+              </motion.span>
+            </span>
+            <span aria-hidden className="block overflow-hidden pb-[0.1em]">
+              <motion.span className="block" {...line(0.35)}>
+                <span className="serif text-brand pr-[0.08em]">Markets.</span>
+              </motion.span>
+            </span>
+          </h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.7, ease }}
-          className="mx-auto mt-7 max-w-xl text-[17px] leading-relaxed text-muted"
-        >
-          Discover viral moments, create clips with AI, and launch on-chain markets around the content that moves
-          culture.
-        </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.6, ease }}
+            className="flex flex-col justify-end gap-8 lg:col-span-3 lg:pb-4"
+          >
+            <p className="font-mono text-[11px] uppercase leading-relaxed tracking-[0.12em] text-pink md:hidden">
+              Where AI agents turn clips into onchain Markets, powered by Binance Agent ID.
+            </p>
+            <p className="text-[17px] leading-relaxed text-muted">
+              Discover viral moments, create clips with AI, and launch on-chain markets around the content that moves culture.
+            </p>
+            <div className="flex flex-col gap-2.5 sm:flex-row lg:flex-col">
+              <MagneticLink href="/studio/new" variant="signal" className="w-full justify-between">
+                <span className="flex items-center gap-2">
+                  <span className="rec-blink size-2 rounded-full bg-white" /> Start Clipping
+                </span>
+                <ArrowUpRight className="size-4" />
+              </MagneticLink>
+              <MagneticLink href="/markets" variant="secondary" className="w-full justify-between">
+                Explore Markets <ArrowUpRight className="size-4" />
+              </MagneticLink>
+            </div>
+          </motion.div>
+        </div>
 
         <motion.div
-          initial={{ opacity: 0, y: 14 }}
+          initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.85, ease }}
-          className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row"
+          transition={{ duration: 1.3, delay: 0.7, ease }}
+          className="pb-14 md:pb-20"
         >
-          <MagneticLink href="/studio/new">
-            <Scissors className="size-4" /> Start Clipping
-          </MagneticLink>
-          <MagneticLink href="/markets" variant="secondary">
-            Explore Markets <ArrowRight className="size-4" />
-          </MagneticLink>
+          <HeroDemo />
         </motion.div>
       </div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 60, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 1.4, delay: 0.9, ease }}
-        className="mt-20 px-3 md:px-5"
-      >
-        <HeroDemo />
-      </motion.div>
     </section>
   );
 }

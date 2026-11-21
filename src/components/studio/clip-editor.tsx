@@ -234,7 +234,7 @@ export function ClipEditor({
           <ArrowLeft className="size-4" /> All candidates
         </button>
         <Card className="overflow-hidden p-3">
-          <div className="flex justify-center rounded-2xl bg-black">
+          <div className="flex justify-center rounded-[10px] bg-black">
             <div className={cn("relative mx-auto overflow-hidden", frame)}>
               <video ref={vref} src={videoUrl} playsInline className="size-full object-cover" onPause={() => setPlaying(false)} onPlay={() => setPlaying(true)} />
               {caption && (
@@ -260,12 +260,12 @@ export function ClipEditor({
           <div className="mt-3 px-1 pb-1">
             <div
               ref={trackRef}
-              className="relative h-14 touch-none select-none rounded-xl bg-ink"
+              className="relative h-14 touch-none select-none rounded-[8px] bg-ink"
               onPointerDown={(e) => {
                 if (e.target === trackRef.current) drag("head")(e);
               }}
             >
-              <div className="pointer-events-none absolute inset-0 flex items-center gap-px overflow-hidden rounded-xl px-1 opacity-50">
+              <div className="pointer-events-none absolute inset-0 flex items-center gap-px overflow-hidden rounded-[8px] px-1 opacity-50">
                 {Array.from({ length: 80 }).map((_, i) => (
                   <div key={i} className="flex-1 rounded-sm bg-white/15" style={{ height: `${30 + 40 * Math.abs(Math.sin(i * 0.9 + start))}%` }} />
                 ))}
@@ -297,7 +297,7 @@ export function ClipEditor({
             </div>
             <div className="mt-3 grid grid-cols-2 gap-2">
               {(["start", "end"] as const).map((w) => (
-                <div key={w} className="flex items-center gap-1.5 rounded-xl border border-line bg-ink px-2 py-1.5">
+                <div key={w} className="flex items-center gap-1.5 rounded-[8px] border border-line bg-ink px-2 py-1.5">
                   <span className="w-9 text-[11px] capitalize text-dim">{w}</span>
                   <button className="rounded-md px-2 py-1 text-xs hover:bg-white/5" onClick={() => nudge(w, -0.5)}>−.5</button>
                   <input
@@ -344,7 +344,7 @@ export function ClipEditor({
             </select>
           </Field>
           <Field label="Format">
-            <div className="flex gap-1 rounded-xl border border-line bg-ink p-1">
+            <div className="flex gap-1 rounded-[8px] border border-line bg-ink p-1">
               {ASPECTS.map((a) => (
                 <button key={a} onClick={() => setAspect(a)} className={cn("flex-1 rounded-lg py-1.5 text-xs", aspect === a ? "bg-white/10 text-white" : "text-dim")}>
                   {a}

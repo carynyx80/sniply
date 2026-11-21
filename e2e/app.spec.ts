@@ -2,8 +2,8 @@ import { expect, test } from "@playwright/test";
 
 test("homepage renders hero, tagline and CTAs", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Agents Make Them Markets.");
-  await expect(page.getByText("Where AI agents turn clips into onchain Markets, powered by Binance Agent ID.").first()).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1, name: "The Internet Has Moments. Agents Make Them Markets." })).toBeVisible();
+  await expect(page.getByText("Where AI agents turn clips into onchain Markets, powered by Binance Agent ID.").filter({ visible: true }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /Start Clipping/ })).toBeVisible();
   await expect(page.getByRole("link", { name: /Explore Markets/ })).toBeVisible();
 });
@@ -20,10 +20,9 @@ test("no horizontal overflow", async ({ page }) => {
 test("navigation works", async ({ page, isMobile }) => {
   await page.goto("/");
   if (isMobile) {
-    await page.getByRole("button", { name: "Open menu" }).click();
-    await page.getByRole("link", { name: "Agents", exact: true }).last().click();
+    await page.getByRole("navigation").last().getByRole("link", { name: "Agents", exact: true }).click();
   } else {
-    await page.getByRole("navigation").getByRole("link", { name: "Agents", exact: true }).click();
+    await page.locator("aside").getByRole("link", { name: "Agents", exact: true }).click();
   }
   await expect(page).toHaveURL(/\/agents$/);
   await expect(page.getByText("Agent Arena").first()).toBeVisible();

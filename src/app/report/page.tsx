@@ -23,7 +23,7 @@ function Report() {
     else { setErr((await r.json()).error ?? "Failed"); setState("error"); }
   };
   return (
-    <main className="mx-auto max-w-2xl px-5 pb-24 pt-32">
+    <main className="mx-auto max-w-2xl px-5 pb-24 pt-8 md:pt-12">
       <PageHeader eyebrow="Trust & safety" title="Report content" sub="Copyright takedowns, spam, harmful or misleading content. Reports go to the moderation queue and every action is audit-logged." />
       <Card className="space-y-5 p-6">
         {state === "done" ? (

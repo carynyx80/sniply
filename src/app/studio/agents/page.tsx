@@ -54,7 +54,7 @@ function Agents() {
             <button
               key={a.id}
               onClick={() => router.push(`/studio/agents?id=${a.id}`)}
-              className={cn("flex w-full items-center gap-3 rounded-2xl border p-3 text-left transition", current?.id === a.id && !creating ? "border-pink/40 bg-pink/[0.06]" : "border-line bg-surface hover:border-line-strong")}
+              className={cn("flex w-full items-center gap-3 rounded-[10px] border p-3 text-left transition", current?.id === a.id && !creating ? "border-pink/40 bg-pink/[0.06]" : "border-line bg-surface hover:border-line-strong")}
             >
               <AgentAvatar hue={a.avatarHue} verified={a.identity.verified} className="size-9" />
               <div className="min-w-0">
@@ -104,7 +104,7 @@ function CreateAgent({ onCreated }: { onCreated: (a: Agent) => void }) {
       <h2 className="text-lg font-medium tracking-tight">Create a clipping agent</h2>
       <div className="mt-6 grid gap-5 md:grid-cols-[auto_1fr]">
         <div className="flex flex-col items-center gap-3">
-          <AgentAvatar hue={hue} className="size-20 rounded-3xl" />
+          <AgentAvatar hue={hue} className="size-20 rounded-[12px]" />
           <input type="range" min={0} max={360} value={hue} onChange={(e) => setHue(+e.target.value)} className="w-24" aria-label="Avatar color" />
         </div>
         <div className="space-y-4">
@@ -120,7 +120,7 @@ function CreateAgent({ onCreated }: { onCreated: (a: Agent) => void }) {
       <p className="mt-7 text-[13px] font-medium">Operating mode</p>
       <div className="mt-2 grid gap-2 md:grid-cols-3">
         {MODES.map((m) => (
-          <button key={m.k} onClick={() => setMode(m.k)} className={cn("rounded-2xl border p-4 text-left transition", mode === m.k ? "border-pink/50 bg-pink/[0.06]" : "border-line bg-ink hover:border-line-strong")}>
+          <button key={m.k} onClick={() => setMode(m.k)} className={cn("rounded-[10px] border p-4 text-left transition", mode === m.k ? "border-pink/50 bg-pink/[0.06]" : "border-line bg-ink hover:border-line-strong")}>
             <p className="text-sm font-medium">{m.t}</p>
             <p className="mt-1 text-xs leading-relaxed text-muted">{m.d}</p>
           </button>
@@ -153,7 +153,7 @@ function CreateAgent({ onCreated }: { onCreated: (a: Agent) => void }) {
             {["9:16", "16:9", "1:1"].map((c) => <option key={c}>{c}</option>)}
           </select>
         </Field>
-        <label className="col-span-2 flex items-center gap-2 self-end rounded-xl border border-line bg-ink px-3 py-2.5 text-sm text-muted">
+        <label className="col-span-2 flex items-center gap-2 self-end rounded-[8px] border border-line bg-ink px-3 py-2.5 text-sm text-muted">
           <input type="checkbox" checked={prefs.autoDraft} onChange={(e) => setPrefs({ ...prefs, autoDraft: e.target.checked })} className="accent-[#FF2BBE]" /> Auto-create drafts
           <input type="checkbox" checked={prefs.notifyOnDraft} onChange={(e) => setPrefs({ ...prefs, notifyOnDraft: e.target.checked })} className="ml-4 accent-[#FF2BBE]" /> Notify me
         </label>
@@ -202,7 +202,7 @@ function ManageAgent({ agent }: { agent: PublicAgent }) {
   return (
     <div className="space-y-4">
       <Card className="flex flex-wrap items-center gap-4 p-5">
-        <AgentAvatar hue={agent.avatarHue} verified={agent.identity.verified} className="size-14 rounded-2xl" />
+        <AgentAvatar hue={agent.avatarHue} verified={agent.identity.verified} className="size-14 rounded-[10px]" />
         <div className="min-w-0 flex-1">
           <h2 className="text-xl font-semibold tracking-tight">{agent.name}</h2>
           <p className="text-sm text-muted">{agent.description || "No description"}</p>
@@ -230,15 +230,15 @@ function ManageAgent({ agent }: { agent: PublicAgent }) {
 
         {agent.identity.verified ? (
           <dl className="relative mt-5 grid gap-3 text-sm sm:grid-cols-3">
-            <div className="rounded-xl border border-line bg-ink p-3">
+            <div className="rounded-[8px] border border-line bg-ink p-3">
               <dt className="text-[11px] text-dim">Owner wallet · on-chain</dt>
               <dd className="mt-1 font-mono text-xs">{shortAddr(agent.identity.ownerWallet, 6)}</dd>
             </div>
-            <div className="rounded-xl border border-line bg-ink p-3">
+            <div className="rounded-[8px] border border-line bg-ink p-3">
               <dt className="text-[11px] text-dim">Registry · BSC</dt>
               <dd className="mt-1 font-mono text-xs">{shortAddr(agent.identity.registry, 6)}</dd>
             </div>
-            <div className="rounded-xl border border-line bg-ink p-3">
+            <div className="rounded-[8px] border border-line bg-ink p-3">
               <dt className="text-[11px] text-dim">Claimed name · unverified</dt>
               <dd className="mt-1 text-xs">{agent.identity.claimedName ?? "—"}</dd>
             </div>
@@ -254,7 +254,7 @@ function ManageAgent({ agent }: { agent: PublicAgent }) {
           </div>
         )}
         {vmsg && <p className={cn("relative mt-3 text-sm", vmsg.ok ? "text-ok" : "text-warn")}>{vmsg.text}</p>}
-        <div className="relative mt-5 rounded-xl border border-line bg-ink/60 p-3.5 text-xs leading-relaxed text-dim">
+        <div className="relative mt-5 rounded-[8px] border border-line bg-ink/60 p-3.5 text-xs leading-relaxed text-dim">
           <p>
             Don’t have one yet? Agent IDs are issued through the Binance Wallet app (Wallet tab → Agent ID). Registry{" "}
             <a className="font-mono underline decoration-dotted hover:text-white" target="_blank" rel="noreferrer" href={`https://bscscan.com/address/${AGENT_ID_REGISTRY.address}`}>
@@ -273,14 +273,14 @@ function ManageAgent({ agent }: { agent: PublicAgent }) {
         </div>
         <div className="mt-4 grid gap-2 md:grid-cols-3">
           {MODES.map((m) => (
-            <button key={m.k} onClick={() => patch({ mode: m.k })} className={cn("rounded-2xl border p-4 text-left transition", agent.mode === m.k ? "border-pink/50 bg-pink/[0.06]" : "border-line bg-ink hover:border-line-strong")}>
+            <button key={m.k} onClick={() => patch({ mode: m.k })} className={cn("rounded-[10px] border p-4 text-left transition", agent.mode === m.k ? "border-pink/50 bg-pink/[0.06]" : "border-line bg-ink hover:border-line-strong")}>
               <p className="text-sm font-medium">{m.t}</p>
               <p className="mt-1 text-xs leading-relaxed text-muted">{m.d}</p>
             </button>
           ))}
         </div>
         {perms && (
-          <div className="mt-5 divide-y divide-line rounded-2xl border border-line">
+          <div className="mt-5 divide-y divide-line rounded-[10px] border border-line">
             <Toggle label="Draft clips" desc="Create clip drafts from analysis results." on={perms.canDraftClips} locked />
             <Toggle label="Draft token metadata" desc="Suggest names, tickers and descriptions for your review." on={perms.canDraftTokens} onChange={(v) => patch({ canDraftTokens: v })} />
             <Toggle
@@ -293,7 +293,7 @@ function ManageAgent({ agent }: { agent: PublicAgent }) {
             <Toggle label="Launch tokens / spend funds" desc="Disabled platform-wide until Agentic Wallet spending limits and transaction validation are verified. Every launch is signed by you." on={false} locked lockIcon />
           </div>
         )}
-        <div className="mt-5 flex items-center justify-between rounded-2xl border border-line bg-ink p-4">
+        <div className="mt-5 flex items-center justify-between rounded-[10px] border border-line bg-ink p-4">
           <div>
             <p className="text-sm font-medium">{perms?.paused ? "Agent paused" : "Emergency pause"}</p>
             <p className="text-xs text-muted">Immediately stops new jobs and drafts for this agent.</p>

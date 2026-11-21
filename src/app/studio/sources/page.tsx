@@ -25,7 +25,7 @@ export default function Sources() {
         ) : (
           <div className="space-y-2">
             {q.data.map((a) => (
-              <div key={a.id} className="flex items-center gap-4 rounded-2xl border border-line bg-surface p-3">
+              <div key={a.id} className="flex items-center gap-4 rounded-[10px] border border-line bg-surface p-3">
                 <video src={`${a.url}#t=1`} className="aspect-video w-28 rounded-lg bg-ink object-cover" muted preload="metadata" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm">{a.filename}</p>

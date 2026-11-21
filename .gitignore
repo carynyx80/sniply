@@ -48,3 +48,4 @@ test-results
 playwright-report
 .claude/
 .vercel
+.next-e2e

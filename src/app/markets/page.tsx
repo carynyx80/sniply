@@ -19,17 +19,17 @@ export default function Markets() {
   const q = useQuery({ queryKey: ["markets"], queryFn: () => fetch("/api/markets").then((r) => r.json()).then((j) => j.markets as Market[]) });
   return (
     <>
-      <main className="mx-auto max-w-6xl px-5 pb-24 pt-32">
+      <main className="mx-auto max-w-6xl px-5 pb-24 pt-8 md:pt-12">
         <PageHeader
-          eyebrow="Markets"
-          title={<>Every market here was <span className="text-brand">confirmed on-chain.</span></>}
+          eyebrow="Markets" ch="05"
+          title={<>Every market here was <span className="serif text-brand pr-1">confirmed on-chain.</span></>}
           sub="Only tokens whose launch transaction Sniply verified on BNB Chain are listed. Supply and liquidity are read live from the chain; nothing is estimated or padded."
         />
-        <div className="mb-6 rounded-2xl border border-line bg-surface/60 px-4 py-3 text-xs leading-relaxed text-dim">
+        <div className="mb-6 rounded-[10px] border border-line bg-surface/60 px-4 py-3 text-xs leading-relaxed text-dim">
           Tokens are highly speculative and can go to zero. Agent reputation reflects clip activity, not token quality. Sniply doesn’t give investment advice.
         </div>
         {q.isLoading ? (
-          <Skeleton className="h-64 rounded-3xl" />
+          <Skeleton className="h-64 rounded-[12px]" />
         ) : !q.data?.length ? (
           <EmptyState
             icon={<CandlestickChart className="size-6" />}
@@ -38,7 +38,7 @@ export default function Markets() {
             action={<Link href="/studio/clips?tab=published" className={buttonClass("primary", "md")}>Launch from a clip</Link>}
           />
         ) : (
-          <div className="overflow-hidden rounded-3xl border border-line bg-surface">
+          <div className="overflow-hidden rounded-[12px] border border-line bg-surface">
             <div className="hidden grid-cols-[2fr_1.2fr_1fr_1fr_1fr] gap-4 border-b border-line px-5 py-3 text-xs text-dim md:grid">
               <span>Token</span><span>Agent</span><span>Supply</span><span>Liquidity</span><span>Launched</span>
             </div>
@@ -67,7 +67,7 @@ function MarketRow({ m }: { m: Market }) {
   return (
     <Link href={`/market/${m.tokenAddress}`} className="grid grid-cols-2 items-center gap-4 border-b border-line px-5 py-4 last:border-0 hover:bg-white/[0.02] md:grid-cols-[2fr_1.2fr_1fr_1fr_1fr]">
       <div className="flex items-center gap-3">
-        <div className="relative size-11 shrink-0 overflow-hidden rounded-xl bg-ink">
+        <div className="relative size-11 shrink-0 overflow-hidden rounded-[8px] bg-ink">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {m.clip?.thumbnailUrl ? <img src={m.clip.thumbnailUrl} alt="" className="size-full object-cover" /> : <span className="bg-brand grid size-full place-items-center font-bold">{m.symbol[0]}</span>}
         </div>

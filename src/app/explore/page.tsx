@@ -60,11 +60,11 @@ function Explore() {
   return (
     <div className="relative">
       {/* filter bar */}
-      <div className="fixed inset-x-0 top-[68px] z-40 flex justify-center px-3 md:top-[76px]">
-        <div className="no-scrollbar flex max-w-full gap-1 overflow-x-auto rounded-full border border-line-strong bg-ink/70 p-1 backdrop-blur-xl">
+      <div className="absolute inset-x-0 top-3 z-30 flex justify-center px-3">
+        <div className="no-scrollbar flex max-w-full gap-0.5 overflow-x-auto rounded-[9px] border border-line-strong bg-ink/75 p-1 backdrop-blur-xl">
           {FILTERS.map(([k, label]) => (
-            <button key={k} onClick={() => setFilter(k)} className={cn("relative shrink-0 rounded-full px-3.5 py-1.5 text-[12.5px] transition-colors", filter === k ? "text-white" : "text-muted hover:text-white")}>
-              {filter === k && <motion.span layoutId="feed-filter" className="absolute inset-0 rounded-full bg-white/10" transition={{ type: "spring", stiffness: 400, damping: 32 }} />}
+            <button key={k} onClick={() => setFilter(k)} className={cn("relative shrink-0 rounded-[6px] px-3 py-1.5 font-mono text-[11px] uppercase tracking-[0.08em] transition-colors", filter === k ? "text-white" : "text-muted hover:text-white")}>
+              {filter === k && <motion.span layoutId="feed-filter" className="absolute inset-0 rounded-[6px] bg-pink" transition={{ type: "spring", stiffness: 400, damping: 32 }} />}
               <span className="relative">{label}</span>
             </button>
           ))}
@@ -72,11 +72,11 @@ function Explore() {
       </div>
 
       {q.isLoading ? (
-        <div className="flex h-dvh items-center justify-center px-4 pt-24">
-          <Skeleton className="aspect-[9/16] h-[78dvh] max-w-full rounded-3xl" />
+        <div className="flex h-[calc(100dvh-var(--bar-h)-64px-env(safe-area-inset-bottom))] lg:h-[calc(100dvh-var(--bar-h))] items-center justify-center px-4 pt-16">
+          <Skeleton className="aspect-[9/16] h-full max-h-[78dvh] max-w-full" />
         </div>
       ) : clips.length === 0 ? (
-        <div className="mx-auto flex min-h-dvh max-w-xl items-center px-5 pt-28">
+        <div className="mx-auto flex h-[calc(100dvh-var(--bar-h)-64px-env(safe-area-inset-bottom))] lg:h-[calc(100dvh-var(--bar-h))] max-w-xl items-center px-5 pt-16">
           <EmptyState
             className="w-full"
             icon={<Film className="size-6" />}
@@ -86,7 +86,7 @@ function Explore() {
           />
         </div>
       ) : (
-        <div className="no-scrollbar h-dvh snap-y snap-mandatory overflow-y-scroll">
+        <div className="no-scrollbar h-[calc(100dvh-var(--bar-h)-64px-env(safe-area-inset-bottom))] lg:h-[calc(100dvh-var(--bar-h))] snap-y snap-mandatory overflow-y-scroll">
           {clips.map((c) => (
             <FeedItem key={c.id} clip={c} muted={muted} onToggleMute={() => setMuted((m) => !m)} />
           ))}
@@ -151,8 +151,8 @@ function FeedItem({ clip, muted, onToggleMute }: { clip: PublicClip; muted: bool
   };
 
   return (
-    <section ref={ref} id={`clip-${clip.id}`} className="relative flex h-dvh snap-start snap-always items-center justify-center px-0 pt-0 md:px-4 md:pb-6 md:pt-28">
-      <div className="relative h-full w-full overflow-hidden bg-black md:aspect-[9/16] md:h-full md:w-auto md:rounded-[28px] md:border md:border-line">
+    <section ref={ref} id={`clip-${clip.id}`} className="relative flex h-full snap-start snap-always items-center justify-center md:px-4 md:pb-4 md:pt-16">
+      <div className="relative h-full w-full overflow-hidden bg-black md:aspect-[9/16] md:h-full md:w-auto md:rounded-[12px] md:border md:border-line">
         <video
           ref={vref}
           src={`${clip.videoUrl}#t=${clip.startSec},${clip.endSec}`}

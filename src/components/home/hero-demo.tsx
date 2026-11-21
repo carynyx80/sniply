@@ -71,14 +71,14 @@ export function HeroDemo() {
   const live = stage >= 4;
 
   return (
-    <div className="relative mx-auto w-full max-w-5xl">
+    <div className="relative w-full">
       {/* ambient glow */}
       <div className="pointer-events-none absolute -inset-x-20 -top-10 bottom-0 -z-10 opacity-70 blur-3xl">
         <div className="absolute left-[10%] top-[20%] h-64 w-64 rounded-full bg-blue/30" />
         <div className="absolute right-[12%] top-[30%] h-64 w-64 rounded-full bg-pink/25" />
       </div>
 
-      <div className="relative overflow-hidden rounded-[28px] border border-line-strong bg-surface/80 p-2 shadow-[0_40px_120px_-40px_rgba(36,87,255,0.45)] backdrop-blur">
+      <div className="relative overflow-hidden rounded-[14px] border border-line-strong bg-surface/80 p-2 viewfinder scanlines shadow-[0_40px_120px_-40px_rgba(36,87,255,0.4)]">
         {/* window chrome */}
         <div className="flex items-center justify-between px-3 py-2">
           <div className="flex items-center gap-1.5">
@@ -92,9 +92,9 @@ export function HeroDemo() {
           <span className="font-mono text-[10px] uppercase tracking-widest text-dim">illustration</span>
         </div>
 
-        <div className="grid gap-2 md:grid-cols-[1fr_260px]">
+        <div className="grid gap-2 md:grid-cols-[1fr_300px]">
           {/* VIDEO + TIMELINE */}
-          <div className="overflow-hidden rounded-[20px] border border-line bg-ink">
+          <div className="overflow-hidden rounded-[10px] border border-line bg-ink">
             <div className="relative aspect-video overflow-hidden">
               <StreamScene excited={detected && !extracted} />
 
@@ -115,7 +115,7 @@ export function HeroDemo() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute left-[30%] top-[18%] h-[58%] w-[40%] rounded-xl border-2 border-pink/90 shadow-[0_0_0_9999px_rgba(8,8,13,0.45)]"
+                    className="absolute left-[30%] top-[18%] h-[58%] w-[40%] rounded-[8px] border-2 border-pink/90 shadow-[0_0_0_9999px_rgba(8,8,13,0.45)]"
                   >
                     <span className="absolute -top-7 left-0 flex items-center gap-1.5 rounded-full bg-pink px-2.5 py-1 text-[10.5px] font-semibold text-white">
                       <Sparkles className="size-3" /> Reaction spike · 0.94
@@ -203,9 +203,9 @@ export function HeroDemo() {
           {/* SIDE PANEL */}
           <div className="flex flex-col gap-2">
             {/* agent identity */}
-            <div className="rounded-[20px] border border-line bg-ink p-3.5">
+            <div className="rounded-[10px] border border-line bg-ink p-3.5">
               <div className="flex items-center gap-3">
-                <div className="relative grid size-10 place-items-center rounded-xl bg-gradient-to-br from-blue to-violet">
+                <div className="relative grid size-10 place-items-center rounded-[8px] bg-gradient-to-br from-blue to-violet">
                   <ScanLine className="size-5" />
                   <span className="absolute -bottom-1 -right-1 grid size-4 place-items-center rounded-full bg-ink">
                     <BadgeCheck className="size-4 text-[#7e9bff]" />
@@ -240,7 +240,7 @@ export function HeroDemo() {
             </div>
 
             {/* clip + token */}
-            <div className="relative min-h-[170px] flex-1 overflow-hidden rounded-[20px] border border-line bg-ink p-3">
+            <div className="relative min-h-[170px] flex-1 overflow-hidden rounded-[10px] border border-line bg-ink p-3">
               <AnimatePresence mode="wait">
                 {!extracted ? (
                   <motion.div
@@ -259,7 +259,7 @@ export function HeroDemo() {
                     transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
                     className="flex gap-3"
                   >
-                    <div className="relative h-[120px] w-[68px] shrink-0 overflow-hidden rounded-xl border border-line-strong">
+                    <div className="relative h-[120px] w-[68px] shrink-0 overflow-hidden rounded-[8px] border border-line-strong">
                       <StreamScene compact />
                       <span className="absolute bottom-1 left-1 rounded bg-black/60 px-1 font-mono text-[8.5px]">0:20</span>
                     </div>
@@ -270,7 +270,7 @@ export function HeroDemo() {
                           <motion.div
                             initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="mt-2.5 rounded-xl border border-line-strong bg-surface p-2"
+                            className="mt-2.5 rounded-[8px] border border-line-strong bg-surface p-2"
                           >
                             <div className="flex items-center gap-2">
                               <span className="bg-brand grid size-6 place-items-center rounded-md text-[10px] font-bold">

@@ -13,9 +13,9 @@ const items = [
 export default function Security() {
   return (
     <>
-      <main className="mx-auto max-w-4xl px-5 pb-24 pt-32">
+      <main className="mx-auto max-w-4xl px-5 pb-24 pt-8 md:pt-12">
         <PageHeader eyebrow="Security" title="How Sniply keeps you in control." />
-        <div className="grid gap-px overflow-hidden rounded-3xl border border-line bg-line md:grid-cols-2">
+        <div className="grid gap-px overflow-hidden rounded-[12px] border border-line bg-line md:grid-cols-2">
           {items.map(([t, d]) => (
             <div key={t} className="bg-surface p-6"><h3 className="font-medium">{t}</h3><p className="mt-2 text-sm leading-relaxed text-muted">{d}</p></div>
           ))}

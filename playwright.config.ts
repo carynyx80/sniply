@@ -14,6 +14,6 @@ export default defineConfig({
     command: `npx next start -p ${PORT}`,
     port: PORT,
     reuseExistingServer: !process.env.CI,
-    env: { SNIPLY_DATA_DIR: ".data-e2e", ADMIN_WALLETS: "", SESSION_SECRET: "e2e-only-session-secret-not-for-production-use-0001" },
+    env: { NEXT_DIST_DIR: process.env.NEXT_DIST_DIR ?? ".next", SNIPLY_DATA_DIR: ".data-e2e", ADMIN_WALLETS: "", SESSION_SECRET: "e2e-only-session-secret-not-for-production-use-0001" },
   },
 });
